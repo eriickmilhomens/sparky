@@ -16,8 +16,6 @@ const SkeletonCard = () => (
 
 const DashboardView = () => {
   const [hideValues, setHideValues] = useState(false);
-  const [headerHidden, setHeaderHidden] = useState(false);
-  const lastScrollY = useRef(0);
   const { loading } = useFinancialData();
   const now = new Date();
   const dayNames = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
@@ -28,32 +26,10 @@ const DashboardView = () => {
     setHideValues(!visible);
   }, []);
 
-  // Hide header on scroll down, show on scroll up
-  useEffect(() => {
-    const scrollEl = document.querySelector('[data-main-scroll]');
-    if (!scrollEl) return;
-
-    const handleScroll = () => {
-      const currentY = scrollEl.scrollTop;
-      if (currentY <= 10) {
-        setHeaderHidden(false);
-      } else if (currentY > lastScrollY.current + 8) {
-        setHeaderHidden(true);
-      } else if (currentY < lastScrollY.current - 8) {
-        setHeaderHidden(false);
-      }
-      lastScrollY.current = currentY;
-    };
-
-    scrollEl.addEventListener('scroll', handleScroll, { passive: true });
-    return () => scrollEl.removeEventListener('scroll', handleScroll);
-  }, []);
-
   if (loading) {
     return (
       <div className="relative space-y-3 px-4 pb-4">
         <div className="pointer-events-none absolute -top-20 right-[-20%] h-[300px] w-[300px] rounded-full bg-primary/5 blur-[100px]" />
-        <Header />
         <SkeletonCard />
         <SkeletonCard />
         <SkeletonCard />
@@ -66,8 +42,6 @@ const DashboardView = () => {
       {/* Ambient background orbs */}
       <div className="pointer-events-none absolute -top-20 right-[-20%] h-[300px] w-[300px] rounded-full bg-primary/6 blur-[100px]" />
       <div className="pointer-events-none absolute top-[40%] left-[-15%] h-[200px] w-[200px] rounded-full bg-primary/4 blur-[80px]" />
-
-      <Header hidden={headerHidden} />
 
       {/* Tiny date header (less prominent now that BalanceHero greets the user) */}
       <p className="text-center text-[11px] text-muted-foreground fade-in-up relative z-10 capitalize">
