@@ -145,7 +145,7 @@ const ChatView = () => {
   const [showNewChatConfirm, setShowNewChatConfirm] = useState(false);
   const [pendingAttachments, setPendingAttachments] = useState<Attachment[]>([]);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
-  const [statusIndex, setStatusIndex] = useState(0);
+  
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
