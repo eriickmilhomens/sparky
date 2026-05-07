@@ -16,8 +16,8 @@ const tabs = [
 
 const TopTabs = memo(({ activeTab, onTabChange }: TopTabsProps) => {
   return (
-    <nav className="shrink-0 flex justify-center px-4 pt-2 pb-2">
-      <div className="liquid-dock flex w-full max-w-md items-center justify-center gap-1 rounded-2xl p-1.5">
+    <nav className="shrink-0 flex justify-center px-3 pt-2 pb-2 overflow-hidden">
+      <div className="liquid-dock flex w-full max-w-md items-center justify-center gap-0.5 rounded-2xl p-1">
         {tabs.map((tab) => {
           const Icon = tab.icon;
           const isActive = activeTab === tab.id;
@@ -27,15 +27,16 @@ const TopTabs = memo(({ activeTab, onTabChange }: TopTabsProps) => {
               type="button"
               onClick={() => onTabChange(tab.id)}
               aria-current={isActive ? "page" : undefined}
+              aria-label={tab.label}
               className={cn(
-                "flex items-center justify-center gap-1.5 rounded-xl px-3.5 py-2.5 font-display text-sm font-semibold transition-all duration-300 active:scale-95",
+                "flex min-w-0 items-center justify-center gap-1 rounded-xl py-2 font-display text-[12px] font-semibold transition-all duration-300 active:scale-95",
                 isActive
-                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-primary text-primary-foreground shadow-md shadow-primary/20 px-3"
+                  : "text-muted-foreground hover:text-foreground px-2.5"
               )}
             >
-              <Icon size={16} strokeWidth={isActive ? 2.4 : 2} />
-              <span className="tracking-tight">{tab.label}</span>
+              <Icon size={15} strokeWidth={isActive ? 2.4 : 2} />
+              {isActive && <span className="tracking-tight truncate">{tab.label}</span>}
             </button>
           );
         })}
