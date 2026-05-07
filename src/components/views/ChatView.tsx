@@ -645,7 +645,13 @@ const ChatView = () => {
                   ))}
                 </div>
               )}
-              <span className="whitespace-pre-wrap">{msg.role === "assistant" ? sanitizeAssistantText(msg.content) : msg.content}</span>
+              {msg.role === "assistant" ? (
+                <div className="prose prose-sm prose-invert max-w-none [&_h2]:text-[13px] [&_h2]:font-bold [&_h2]:mt-3 [&_h2]:mb-1.5 [&_h2]:text-primary [&_h2:first-child]:mt-0 [&_p]:my-1 [&_ul]:my-1 [&_ul]:pl-4 [&_ol]:my-1 [&_ol]:pl-4 [&_li]:my-0.5 [&_strong]:text-foreground [&_table]:w-full [&_table]:my-2 [&_table]:border-collapse [&_table]:text-[11px] [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_code]:bg-muted [&_code]:px-1 [&_code]:rounded">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{sanitizeAssistantText(msg.content)}</ReactMarkdown>
+                </div>
+              ) : (
+                <span className="whitespace-pre-wrap">{msg.content}</span>
+              )}
             </div>
             {msg.role === "user" && (
               <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center shrink-0 mt-1">
