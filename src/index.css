@@ -299,10 +299,10 @@
   --sparky-rgb-angle: 0deg;
   background: conic-gradient(
     from var(--sparky-rgb-angle),
-    #ff3b6b, #ffb13b, #ffd93b, #3bff8a, #3bd4ff, #6b3bff, #ff3bd4, #ff3b6b
+    #ff3b6b, #ff7a3b, #ffb13b, #ffd93b, #a3ff3b, #3bff8a, #3bffd4, #3bd4ff, #3b7aff, #6b3bff, #b13bff, #ff3bd4, #ff3b8a, #ff3b6b
   );
   padding: 1.5px;
-  animation: sparky-rgb-spin 4s linear infinite;
+  animation: sparky-rgb-spin 1.8s linear infinite;
   box-shadow:
     0 8px 24px -8px rgba(255, 59, 107, 0.35),
     0 8px 24px -8px rgba(59, 212, 255, 0.25),
@@ -311,14 +311,14 @@
 
 @supports not (background: conic-gradient(from 0deg, red, blue)) {
   .sparky-rgb-fab {
-    background: linear-gradient(90deg, #ff3b6b, #3bd4ff, #6b3bff, #ff3b6b);
-    background-size: 300% 100%;
-    animation: sparky-rgb-fallback 4s linear infinite;
+    background: linear-gradient(90deg, #ff3b6b, #ffb13b, #3bff8a, #3bd4ff, #6b3bff, #ff3bd4, #ff3b6b);
+    background-size: 400% 100%;
+    animation: sparky-rgb-fallback 1.8s linear infinite;
   }
 }
 
 @keyframes sparky-rgb-fallback {
-  to { background-position: 300% 0; }
+  to { background-position: 400% 0; }
 }
 
 /* Custom scrollbar */
