@@ -541,55 +541,69 @@ const ChatView = () => {
   }
 
   return (
-    <div className="flex flex-col overflow-hidden" style={{ height: '100%', minHeight: '100dvh', paddingTop: 'env(safe-area-inset-top, 20px)' }}>
+    <div
+      className="flex flex-col h-full w-full overflow-hidden bg-gradient-to-b from-background via-background to-muted/30"
+      style={{ paddingTop: 'env(safe-area-inset-top, 20px)' }}
+    >
       {showNewChatConfirm && <NewChatConfirmPopup />}
-      {/* Header - fixed at top */}
-      <div className="flex-shrink-0 px-4 pt-3 pb-2 flex items-center justify-between border-b border-border bg-background">
-        <div className="flex items-center gap-2">
+
+      {/* Header */}
+      <div className="flex-shrink-0 px-4 pt-2 pb-3 flex items-center justify-between">
+        <div className="flex items-center gap-2.5 min-w-0">
           <button
-            onClick={() => {
-              if ((window as any).__sparkyGoHome) (window as any).__sparkyGoHome();
-            }}
-            className="p-1.5 rounded-full hover:bg-muted active:scale-95 text-muted-foreground"
+            onClick={() => { if ((window as any).__sparkyGoHome) (window as any).__sparkyGoHome(); }}
+            className="h-9 w-9 rounded-2xl flex items-center justify-center bg-card/60 border border-border/40 backdrop-blur-md active:scale-95 transition-all"
             title="Voltar"
           >
-            <ChevronLeft size={20} />
+            <ChevronLeft size={18} />
           </button>
-          <div className="h-8 w-8 rounded-full bg-primary/15 flex items-center justify-center">
-            <Bot size={16} className="text-primary" />
+          <div className="relative">
+            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/40 to-primary/10 blur-md" />
+            <div className="relative h-9 w-9 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
+              <Bot size={16} className="text-primary-foreground" />
+            </div>
           </div>
-          <div>
-            <h1 className="text-lg font-bold">Sparky AI</h1>
-            <p className="text-[10px] text-muted-foreground">Seu assistente financeiro inteligente</p>
+          <div className="min-w-0">
+            <h1 className="font-display text-[15px] font-bold tracking-tight leading-none">Sparky</h1>
+            <div className="flex items-center gap-1.5 mt-1">
+              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
+              <p className="text-[10px] text-muted-foreground font-medium">online</p>
+            </div>
           </div>
         </div>
-        <div className="flex items-center gap-1">
-          <button onClick={() => setShowHistory(true)} className="p-2 rounded-full hover:bg-muted active:scale-95 text-muted-foreground" title="Histórico">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        <div className="flex items-center gap-1.5">
+          <button onClick={() => setShowHistory(true)} className="h-9 w-9 rounded-2xl flex items-center justify-center bg-card/60 border border-border/40 backdrop-blur-md active:scale-95 transition-all" title="Histórico">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           </button>
-          <button onClick={handleNewChatClick} className="p-2 rounded-full hover:bg-muted active:scale-95 text-muted-foreground" title="Nova conversa">
-            <Plus size={18} />
+          <button onClick={handleNewChatClick} className="h-9 w-9 rounded-2xl flex items-center justify-center bg-card/60 border border-border/40 backdrop-blur-md active:scale-95 transition-all" title="Nova conversa">
+            <Plus size={16} />
           </button>
         </div>
       </div>
 
-      {/* Messages */}
-      <div className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 space-y-3 pb-4" style={{ touchAction: 'pan-y' }}>
+      {/* Messages — flex-1 with min-h-0 enables proper scroll */}
+      <div
+        className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 pt-2 pb-3"
+        style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' as any }}
+      >
         {messages.length === 0 && (
-          <div className="flex flex-col items-center text-center pt-16">
-            <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-4">
-              <Bot size={28} className="text-primary" />
+          <div className="flex flex-col items-center text-center pt-10 pb-6">
+            <div className="relative mb-5">
+              <div className="absolute inset-0 rounded-full bg-primary/30 blur-2xl" />
+              <div className="relative h-20 w-20 rounded-full bg-gradient-to-br from-primary via-primary/80 to-primary/40 flex items-center justify-center shadow-2xl">
+                <Bot size={32} className="text-primary-foreground" />
+              </div>
             </div>
-            <p className="text-sm font-semibold mb-1">Olá! Sou o Sparky</p>
-            <p className="text-xs text-muted-foreground max-w-[260px] mb-4">
-              Pergunte sobre finanças, envie imagens de extratos ou documentos para análise!
+            <h2 className="font-display text-xl font-bold tracking-tight mb-1.5">Como posso ajudar?</h2>
+            <p className="text-xs text-muted-foreground max-w-[280px] mb-6 leading-relaxed">
+              Análise de extratos, projeções e otimização. Envie texto ou anexe arquivos.
             </p>
-            <div className="flex flex-wrap justify-center gap-2 max-w-[300px]">
+            <div className="grid grid-cols-2 gap-2 w-full max-w-[320px]">
               {shuffledChips.map((chip) => (
                 <button
                   key={chip}
                   onClick={() => sendDirect(chip)}
-                  className="rounded-full bg-muted border border-border px-3 py-1.5 text-[11px] text-muted-foreground hover:text-foreground hover:border-primary/30 active:scale-95 transition-all"
+                  className="rounded-2xl bg-card/70 border border-border/50 backdrop-blur-sm px-3 py-2.5 text-[11px] font-medium text-left text-foreground/80 hover:text-foreground hover:border-primary/40 hover:bg-card active:scale-[0.97] transition-all"
                 >
                   {chip}
                 </button>
@@ -597,83 +611,87 @@ const ChatView = () => {
             </div>
           </div>
         )}
-        {messages.map((msg, i) => (
-          <div key={i} className={cn("flex gap-2", msg.role === "user" ? "justify-end" : "justify-start")}>
-            {msg.role === "assistant" && (
-              <div className="h-7 w-7 rounded-full bg-primary/15 flex items-center justify-center shrink-0 mt-1">
-                <Bot size={12} className="text-primary" />
-              </div>
-            )}
-            <div className={cn(
-              "max-w-[80%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
-              msg.role === "user"
-                ? "bg-primary text-primary-foreground rounded-br-md"
-                : "bg-card border border-border rounded-bl-md"
-            )}>
-              {/* Show attachment previews */}
-              {msg.attachments && msg.attachments.length > 0 && (
-                <div className="flex flex-wrap gap-1.5 mb-2">
-                  {msg.attachments.map((att, j) => (
-                    <div key={j} className="rounded-lg overflow-hidden">
-                      {att.type === "image" ? (
-                        <img src={att.data} alt={att.name} className="max-h-32 max-w-[200px] rounded-lg object-cover" />
-                      ) : (
-                        <div className="flex items-center gap-1.5 rounded-lg bg-black/20 px-2.5 py-1.5">
-                          <FileText size={12} />
-                          <span className="text-[10px] font-medium truncate max-w-[120px]">{att.name}</span>
-                        </div>
-                      )}
-                    </div>
-                  ))}
+        <div className="space-y-4">
+          {messages.map((msg, i) => (
+            <div key={i} className={cn("flex gap-2 fade-in-up", msg.role === "user" ? "justify-end" : "justify-start")}>
+              {msg.role === "assistant" && (
+                <div className="h-7 w-7 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shrink-0 mt-1 shadow-md">
+                  <Bot size={11} className="text-primary-foreground" />
                 </div>
               )}
-              {msg.role === "assistant" ? (
-                <div className="prose prose-sm prose-invert max-w-none [&_h2]:text-[13px] [&_h2]:font-bold [&_h2]:mt-3 [&_h2]:mb-1.5 [&_h2]:text-primary [&_h2:first-child]:mt-0 [&_p]:my-1 [&_ul]:my-1 [&_ul]:pl-4 [&_ol]:my-1 [&_ol]:pl-4 [&_li]:my-0.5 [&_strong]:text-foreground [&_table]:w-full [&_table]:my-2 [&_table]:border-collapse [&_table]:text-[11px] [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_code]:bg-muted [&_code]:px-1 [&_code]:rounded">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{sanitizeAssistantText(msg.content)}</ReactMarkdown>
+              <div
+                className={cn(
+                  "max-w-[82%] px-3.5 py-2.5 text-[13px] leading-relaxed",
+                  msg.role === "user"
+                    ? "bg-primary text-primary-foreground rounded-2xl rounded-br-sm shadow-sm"
+                    : "bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl rounded-bl-sm shadow-sm"
+                )}
+              >
+                {msg.attachments && msg.attachments.length > 0 && (
+                  <div className="flex flex-wrap gap-1.5 mb-2">
+                    {msg.attachments.map((att, j) => (
+                      <div key={j} className="rounded-xl overflow-hidden">
+                        {att.type === "image" ? (
+                          <img src={att.data} alt={att.name} className="max-h-32 max-w-[200px] rounded-xl object-cover" />
+                        ) : (
+                          <div className="flex items-center gap-1.5 rounded-xl bg-foreground/10 px-2.5 py-1.5">
+                            <FileText size={12} />
+                            <span className="text-[10px] font-medium truncate max-w-[120px]">{att.name}</span>
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                )}
+                {msg.role === "assistant" ? (
+                  <div className="prose prose-sm prose-invert max-w-none [&_h1]:text-[14px] [&_h1]:font-bold [&_h1]:mt-2 [&_h1]:mb-1 [&_h2]:text-[13px] [&_h2]:font-semibold [&_h2]:mt-3 [&_h2]:mb-1.5 [&_h2:first-child]:mt-0 [&_h3]:text-[12px] [&_h3]:font-semibold [&_h3]:mt-2 [&_h3]:mb-1 [&_p]:my-1 [&_p:first-child]:mt-0 [&_p:last-child]:mb-0 [&_ul]:my-1.5 [&_ul]:pl-4 [&_ol]:my-1.5 [&_ol]:pl-4 [&_li]:my-0.5 [&_strong]:text-foreground [&_strong]:font-semibold [&_table]:w-full [&_table]:my-2 [&_table]:border-collapse [&_table]:text-[11px] [&_th]:border [&_th]:border-border/60 [&_th]:bg-muted/40 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_th]:font-semibold [&_td]:border [&_td]:border-border/60 [&_td]:px-2 [&_td]:py-1 [&_code]:bg-muted/60 [&_code]:px-1.5 [&_code]:py-0.5 [&_code]:rounded-md [&_code]:text-[11px] [&_a]:text-primary [&_a]:underline [&_a]:underline-offset-2">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>{sanitizeAssistantText(msg.content)}</ReactMarkdown>
+                  </div>
+                ) : (
+                  <span className="whitespace-pre-wrap">{msg.content}</span>
+                )}
+              </div>
+              {msg.role === "user" && (
+                <div className="h-7 w-7 rounded-xl bg-muted/60 border border-border/50 flex items-center justify-center shrink-0 mt-1">
+                  <User size={11} className="text-muted-foreground" />
                 </div>
-              ) : (
-                <span className="whitespace-pre-wrap">{msg.content}</span>
               )}
             </div>
-            {msg.role === "user" && (
-              <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center shrink-0 mt-1">
-                <User size={12} className="text-muted-foreground" />
+          ))}
+          {isLoading && lastAssistant.length === 0 && (
+            <div className="flex gap-2 items-start fade-in-up">
+              <div className="h-7 w-7 rounded-xl bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shrink-0 shadow-md">
+                <Bot size={11} className="text-primary-foreground" />
               </div>
-            )}
-          </div>
-        ))}
-        {isLoading && lastAssistant.length === 0 && (
-          <div className="flex gap-2 items-start">
-            <div className="h-7 w-7 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
-              <Bot size={12} className="text-primary" />
-            </div>
-            <div className="bg-card border border-border rounded-2xl rounded-bl-md px-3.5 py-2.5">
-              <div className="flex items-center gap-2">
-                <Loader2 size={12} className="animate-spin text-muted-foreground" />
-                <span className="text-xs text-muted-foreground">Pensando...</span>
+              <div className="bg-card/80 backdrop-blur-md border border-border/50 rounded-2xl rounded-bl-sm px-3.5 py-2.5">
+                <div className="flex items-center gap-1.5">
+                  <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '0ms' }} />
+                  <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '150ms' }} />
+                  <span className="h-1.5 w-1.5 rounded-full bg-muted-foreground/60 animate-bounce" style={{ animationDelay: '300ms' }} />
+                </div>
               </div>
             </div>
-          </div>
-        )}
-        <div ref={bottomRef} />
+          )}
+          <div ref={bottomRef} />
+        </div>
       </div>
 
       {/* Pending attachments preview */}
       {pendingAttachments.length > 0 && (
-        <div className="px-4 py-2 border-t border-border flex gap-2 overflow-x-auto">
+        <div className="flex-shrink-0 px-4 py-2 flex gap-2 overflow-x-auto no-scrollbar">
           {pendingAttachments.map((att, i) => (
             <div key={i} className="relative shrink-0 group">
               {att.type === "image" ? (
-                <img src={att.data} alt={att.name} className="h-14 w-14 rounded-lg object-cover border border-border" />
+                <img src={att.data} alt={att.name} className="h-14 w-14 rounded-xl object-cover border border-border/60" />
               ) : (
-                <div className="h-14 w-14 rounded-lg bg-muted border border-border flex flex-col items-center justify-center gap-0.5">
+                <div className="h-14 w-14 rounded-xl bg-card border border-border/60 flex flex-col items-center justify-center gap-0.5">
                   <FileText size={16} className="text-muted-foreground" />
                   <span className="text-[7px] text-muted-foreground truncate w-12 text-center">{att.name.split('.').pop()?.toUpperCase()}</span>
                 </div>
               )}
               <button
                 onClick={() => removeAttachment(i)}
-                className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute -top-1.5 -right-1.5 h-5 w-5 rounded-full bg-destructive text-destructive-foreground flex items-center justify-center shadow-md"
               >
                 <X size={10} />
               </button>
@@ -682,34 +700,28 @@ const ChatView = () => {
         </div>
       )}
 
-      {/* Input - always pinned to bottom */}
-      <div className="flex-shrink-0 px-4 pt-2 border-t border-border bg-background" style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}>
-        <div className="flex items-center gap-2 rounded-2xl border border-border bg-card px-3 py-2">
-          {/* Attach button */}
+      {/* Input pinned to bottom */}
+      <div
+        className="flex-shrink-0 px-3 pt-2"
+        style={{ paddingBottom: 'calc(0.75rem + env(safe-area-inset-bottom, 0px))' }}
+      >
+        <div className="flex items-end gap-1.5 rounded-3xl border border-border/60 bg-card/80 backdrop-blur-xl px-2 py-1.5 shadow-lg">
           <div className="relative">
             <button
               onClick={() => setShowAttachMenu(!showAttachMenu)}
-              className="h-8 w-8 rounded-full flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted active:scale-95 transition-all"
+              className="h-9 w-9 rounded-2xl flex items-center justify-center text-muted-foreground hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all"
             >
               <Paperclip size={16} />
             </button>
             {showAttachMenu && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setShowAttachMenu(false)} />
-                <div className="absolute bottom-10 left-0 bg-card border border-border rounded-xl shadow-lg z-20 py-1.5 min-w-[160px]">
-                  <button
-                    onClick={() => { imageInputRef.current?.click(); }}
-                    className="w-full px-4 py-2.5 text-xs flex items-center gap-2.5 hover:bg-muted transition-colors"
-                  >
-                    <Image size={14} className="text-primary" />
-                    Enviar imagem
+                <div className="absolute bottom-11 left-0 bg-card border border-border/60 rounded-2xl shadow-2xl z-20 py-1.5 min-w-[170px] backdrop-blur-xl">
+                  <button onClick={() => { imageInputRef.current?.click(); }} className="w-full px-4 py-2.5 text-xs flex items-center gap-2.5 hover:bg-muted/60 transition-colors">
+                    <Image size={14} className="text-primary" /> Enviar imagem
                   </button>
-                  <button
-                    onClick={() => { fileInputRef.current?.click(); }}
-                    className="w-full px-4 py-2.5 text-xs flex items-center gap-2.5 hover:bg-muted transition-colors"
-                  >
-                    <FileText size={14} className="text-success" />
-                    Enviar documento
+                  <button onClick={() => { fileInputRef.current?.click(); }} className="w-full px-4 py-2.5 text-xs flex items-center gap-2.5 hover:bg-muted/60 transition-colors">
+                    <FileText size={14} className="text-success" /> Enviar documento
                   </button>
                 </div>
               </>
@@ -723,15 +735,17 @@ const ChatView = () => {
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && send()}
-            placeholder="Pergunte ao Sparky..."
-            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground"
+            placeholder="Mensagem para o Sparky"
+            className="flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground/70 px-1 py-2"
           />
           <button
             onClick={send}
             disabled={isLoading || (!input.trim() && pendingAttachments.length === 0)}
             className={cn(
-              "h-8 w-8 rounded-full flex items-center justify-center transition-all active:scale-95",
-              (input.trim() || pendingAttachments.length > 0) ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+              "h-9 w-9 rounded-2xl flex items-center justify-center transition-all active:scale-95 shrink-0",
+              (input.trim() || pendingAttachments.length > 0)
+                ? "bg-primary text-primary-foreground shadow-md shadow-primary/30"
+                : "bg-muted/60 text-muted-foreground"
             )}
           >
             <Send size={14} />
