@@ -1,5 +1,4 @@
-import { useState, useCallback, useEffect, useRef } from "react";
-import Header from "@/components/layout/Header";
+import { useState, useCallback } from "react";
 import BalanceHero from "@/components/dashboard/BalanceHero";
 import WidgetGrid from "@/components/dashboard/WidgetGrid";
 import SpendingOverview from "@/components/dashboard/SpendingOverview";
