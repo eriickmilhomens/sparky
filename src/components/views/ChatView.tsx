@@ -1,5 +1,7 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { Send, Bot, User, Loader2, Plus, Trash2, ChevronLeft, MoreVertical, Paperclip, Image, FileText, X, Sparkles } from "lucide-react";
+import { Send, Bot, User, Loader2, Plus, Trash2, ChevronLeft, MoreVertical, Paperclip, Image, FileText, X, Sparkles, Check } from "lucide-react";
+import ReactMarkdown from "react-markdown";
+import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { useFinancialQuery, fmt } from "@/hooks/useFinancialQuery";
@@ -106,19 +108,30 @@ const SUGGESTION_CHIPS = [
   "Análise de categorias",
 ];
 
-const STATUS_PHRASES = [
-  "Analisando seus dados...",
-  "Consultando orçamentos...",
-  "Formulando resposta...",
-  "Processando informações...",
-  "Verificando transações...",
+const COT_STEPS = [
+  { key: "Identificação", label: "Identificando variáveis" },
+  { key: "Análise de Padrões", label: "Cruzando padrões" },
+  { key: "Projeção", label: "Projetando 30/60/90 dias" },
+  { key: "Otimização", label: "Otimizando ações" },
 ];
 
+// Preserve markdown; only strip HTML tags and disallowed dashes
 const sanitizeAssistantText = (text: string) => text
   .replace(/<[^>\n]*(>|$)/g, "")
-  .replace(/\*\*/g, "")
-  .replace(/\*/g, "")
+  .replace(/[—–]/g, ",")
   .replace(/&nbsp;/g, " ");
+
+const detectCompletedSteps = (text: string): number => {
+  // A step is "completed" once the NEXT heading (or end markers) appears
+  const order = ["## Identificação", "## Análise de Padrões", "## Projeção", "## Otimização", "## Conclusão"];
+  let completed = 0;
+  for (let i = 0; i < order.length - 1; i++) {
+    if (text.includes(order[i + 1])) completed = i + 1;
+  }
+  if (text.includes("## Conclusão")) completed = 4;
+  return completed;
+};
+
 
 const ChatView = () => {
   const { data: financialData, available, daysLeft, dailyBudget } = useFinancialQuery();
@@ -132,7 +145,7 @@ const ChatView = () => {
   const [showNewChatConfirm, setShowNewChatConfirm] = useState(false);
   const [pendingAttachments, setPendingAttachments] = useState<Attachment[]>([]);
   const [showAttachMenu, setShowAttachMenu] = useState(false);
-  const [statusIndex, setStatusIndex] = useState(0);
+  
   const bottomRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const imageInputRef = useRef<HTMLInputElement>(null);
@@ -143,16 +156,14 @@ const ChatView = () => {
     return shuffled.slice(0, 4);
   }, [activeId]);
 
-  // Set current user ID for scoped chat storage
-  // Rotate status phrases while loading
-  useEffect(() => {
-    if (!isLoading) return;
-    setStatusIndex(0);
-    const interval = setInterval(() => {
-      setStatusIndex(prev => (prev + 1) % STATUS_PHRASES.length);
-    }, 2500);
-    return () => clearInterval(interval);
-  }, [isLoading]);
+  // Track Chain-of-Thought completion based on streamed assistant text
+  const lastAssistant = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "assistant") return messages[i].content;
+    }
+    return "";
+  }, [messages]);
+  const completedSteps = useMemo(() => detectCompletedSteps(lastAssistant), [lastAssistant]);
 
   useEffect(() => {
     const isDemo = localStorage.getItem("sparky-demo-mode") === "true";
@@ -634,7 +645,13 @@ const ChatView = () => {
                   ))}
                 </div>
               )}
-              <span className="whitespace-pre-wrap">{msg.role === "assistant" ? sanitizeAssistantText(msg.content) : msg.content}</span>
+              {msg.role === "assistant" ? (
+                <div className="prose prose-sm prose-invert max-w-none [&_h2]:text-[13px] [&_h2]:font-bold [&_h2]:mt-3 [&_h2]:mb-1.5 [&_h2]:text-primary [&_h2:first-child]:mt-0 [&_p]:my-1 [&_ul]:my-1 [&_ul]:pl-4 [&_ol]:my-1 [&_ol]:pl-4 [&_li]:my-0.5 [&_strong]:text-foreground [&_table]:w-full [&_table]:my-2 [&_table]:border-collapse [&_table]:text-[11px] [&_th]:border [&_th]:border-border [&_th]:bg-muted/50 [&_th]:px-2 [&_th]:py-1 [&_th]:text-left [&_td]:border [&_td]:border-border [&_td]:px-2 [&_td]:py-1 [&_code]:bg-muted [&_code]:px-1 [&_code]:rounded">
+                  <ReactMarkdown remarkPlugins={[remarkGfm]}>{sanitizeAssistantText(msg.content)}</ReactMarkdown>
+                </div>
+              ) : (
+                <span className="whitespace-pre-wrap">{msg.content}</span>
+              )}
             </div>
             {msg.role === "user" && (
               <div className="h-7 w-7 rounded-full bg-muted flex items-center justify-center shrink-0 mt-1">
@@ -643,14 +660,38 @@ const ChatView = () => {
             )}
           </div>
         ))}
-        {isLoading && messages[messages.length - 1]?.role !== "assistant" && (
+        {isLoading && (
           <div className="flex gap-2 items-start">
             <div className="h-7 w-7 rounded-full bg-primary/15 flex items-center justify-center shrink-0">
               <Bot size={12} className="text-primary" />
             </div>
-            <div className="bg-card border border-border rounded-2xl rounded-bl-md px-3.5 py-2.5 flex items-center gap-2">
-              <Loader2 size={14} className="animate-spin text-primary" />
-              <span className="text-[11px] text-muted-foreground animate-pulse">{STATUS_PHRASES[statusIndex]}</span>
+            <div className="bg-card border border-border rounded-2xl rounded-bl-md px-3.5 py-2.5 min-w-[220px]">
+              <div className="flex items-center gap-2 mb-2 pb-2 border-b border-border/60">
+                <Loader2 size={12} className="animate-spin text-primary" />
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground">Processando</span>
+              </div>
+              <ul className="space-y-1.5">
+                {COT_STEPS.map((step, idx) => {
+                  const done = completedSteps > idx;
+                  const active = completedSteps === idx;
+                  return (
+                    <li key={step.key} className="flex items-center gap-2">
+                      <span className={cn(
+                        "h-4 w-4 rounded-full flex items-center justify-center shrink-0 transition-all",
+                        done ? "bg-success/20 text-success" : active ? "bg-primary/20 text-primary" : "bg-muted text-muted-foreground"
+                      )}>
+                        {done ? <Check size={10} strokeWidth={3} /> : active ? <Loader2 size={9} className="animate-spin" /> : <span className="h-1 w-1 rounded-full bg-current" />}
+                      </span>
+                      <span className={cn(
+                        "text-[11px] transition-all",
+                        done ? "text-foreground font-medium" : active ? "text-primary font-medium" : "text-muted-foreground"
+                      )}>
+                        {step.label}
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
             </div>
           </div>
         )}
