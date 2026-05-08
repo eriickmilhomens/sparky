@@ -116,7 +116,7 @@ const StatusCards = () => {
               <button
                 key={s.label}
                 onClick={() => setAPagarOpen(true)}
-                className={`card-zelo fade-in-up stagger-${i + 1} !py-3 !px-2.5 text-left cursor-pointer hover:border-warning/30 active:scale-[0.97] transition-all duration-300 flex flex-col`}
+                className={`card-zelo fade-in-up stagger-${i + 1} !py-3 !px-2.5 text-left cursor-pointer hover:border-warning/30 active:scale-[0.97] transition-all duration-300 flex flex-col h-full`}
               >
                 {content}
               </button>
@@ -124,7 +124,7 @@ const StatusCards = () => {
           }
 
           return (
-            <div key={s.label} className={`card-zelo fade-in-up stagger-${i + 1} !py-3 !px-2.5 flex flex-col`}>
+            <div key={s.label} className={`card-zelo fade-in-up stagger-${i + 1} !py-3 !px-2.5 flex flex-col h-full`}>
               {content}
             </div>
           );
