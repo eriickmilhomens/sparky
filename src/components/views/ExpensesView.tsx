@@ -78,9 +78,10 @@ const ExpensesView = () => {
       </div>
 
       <button onClick={() => setModalOpen(true)}
-        className="fixed right-5 z-50 flex h-13 w-13 items-center justify-center rounded-2xl bg-primary shadow-lg shadow-primary/25 text-primary-foreground transition-transform active:scale-90 pulse-glow will-change-transform"
+        aria-label="Adicionar despesa"
+        className="fab-add fixed right-5 z-[100] flex h-14 w-14 items-center justify-center rounded-2xl text-white transition-transform active:scale-90 will-change-transform"
         style={{ bottom: 'calc(112px + env(safe-area-inset-bottom, 0px))' }}>
-        <Plus size={22} strokeWidth={2.5} />
+        <Plus size={24} strokeWidth={2.75} className="relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.4)]" />
       </button>
 
       <Suspense fallback={null}>
