@@ -166,15 +166,28 @@
 
   /* ── Premium Glass Card ── */
   .card-zelo {
-    @apply bg-card/80 rounded-3xl p-4;
-    border: 1px solid hsl(var(--border) / 0.45);
+    @apply bg-card/60 rounded-3xl p-4 relative;
+    border: 1px solid hsl(var(--border) / 0.35);
     box-shadow:
       0 2px 8px hsl(0 0% 0% / 0.06),
       0 8px 32px hsl(0 0% 0% / 0.04),
-      inset 0 1px 0 hsl(var(--foreground) / 0.03);
-    backdrop-filter: blur(20px) saturate(160%);
-    -webkit-backdrop-filter: blur(20px) saturate(160%);
+      inset 0 1px 0 hsl(var(--foreground) / 0.04);
+    backdrop-filter: blur(24px) saturate(180%);
+    -webkit-backdrop-filter: blur(24px) saturate(180%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .card-zelo::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(135deg, hsl(0 0% 100% / 0.16), hsl(0 0% 100% / 0.02) 45%, hsl(0 0% 100% / 0.08));
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+            mask-composite: exclude;
+    pointer-events: none;
   }
 
   .card-zelo:hover {
