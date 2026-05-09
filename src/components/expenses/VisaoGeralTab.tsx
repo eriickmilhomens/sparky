@@ -7,6 +7,7 @@ import PaceBar from "@/components/expenses/PaceBar";
 import BudgetAlert from "@/components/expenses/BudgetAlert";
 import SyncStatusBanner from "@/components/expenses/SyncStatusBanner";
 import SyncBanner from "@/components/expenses/SyncBanner";
+import ImportReminderBanner from "@/components/expenses/ImportReminderBanner";
 import FinancialStatusCard from "@/components/expenses/FinancialStatusCard";
 import SubscriptionsCard from "@/components/expenses/SubscriptionsCard";
 import DailyBudgetWidget from "@/components/expenses/DailyBudgetWidget";
@@ -47,6 +48,7 @@ const VisaoGeralTab = ({ onNavigateToMetas }: VisaoGeralTabProps) => {
   return (
     <div className="space-y-3">
       <SyncStatusBanner />
+      <ImportReminderBanner />
       <SyncBanner onNavigateToMetas={onNavigateToMetas} hideSyncBanner />
       <FinancialStatusCard />
       <BudgetAlert />

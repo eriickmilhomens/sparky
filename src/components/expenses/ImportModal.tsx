@@ -5,6 +5,7 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useFinancialData } from "@/hooks/useFinancialData";
 import { useDockVisibility } from "@/hooks/useDockVisibility";
+import { markImported } from "@/lib/importReminder";
 
 interface Transaction {
   id: string;
@@ -126,6 +127,7 @@ const ImportModal = ({ open, onClose }: ImportModalProps) => {
       transactions: [...newTxs, ...data.transactions],
     });
 
+    markImported();
     toast.success(`Sucesso! ${selected.length} transações foram integradas ao seu Sparky e o saldo foi atualizado.`);
     handleClose();
   };
