@@ -9,6 +9,8 @@ export interface AppBrand {
   hex: string;
   /** Iniciais para o avatar de fallback. */
   abbr: string;
+  /** Nome de ícone do Lucide para fallback (preferido sobre abbr). */
+  iconName?: string;
 }
 
 export const APP_BRANDS: Record<string, AppBrand> = {
@@ -46,13 +48,18 @@ export const APP_BRANDS: Record<string, AppBrand> = {
   "canva":             { name: "Canva",             slug: "canva",            hex: "00C4CC", abbr: "CV" },
   "figma":             { name: "Figma",             slug: "figma",            hex: "F24E1E", abbr: "FG" },
   "duolingo":          { name: "Duolingo",          slug: "duolingo",         hex: "58CC02", abbr: "DL" },
+  "udemy":             { name: "Udemy",             slug: "udemy",            hex: "A435F0", abbr: "UD" },
+  "alura":             { name: "Alura",             slug: "",                 hex: "0F4C81", abbr: "AL", iconName: "graduation-cap" },
+  "coursera":          { name: "Coursera",          slug: "coursera",         hex: "0056D2", abbr: "CO" },
+  "linkedin":          { name: "LinkedIn",          slug: "linkedin",         hex: "0A66C2", abbr: "LI" },
+  "twitch":            { name: "Twitch",            slug: "twitch",           hex: "9146FF", abbr: "TW" },
   "uber":              { name: "Uber One",          slug: "uber",             hex: "000000", abbr: "UB" },
   "ifood":             { name: "iFood",             slug: "ifood",            hex: "EA1D2C", abbr: "iF" },
   "rappi":             { name: "Rappi",             slug: "rappi",            hex: "FF441F", abbr: "RP" },
   "claro":             { name: "Claro",             slug: "claro",            hex: "E60000", abbr: "CL" },
   "vivo":              { name: "Vivo",              slug: "vivo",             hex: "660099", abbr: "VV" },
-  "tim":               { name: "TIM",               slug: "",                 hex: "003DA5", abbr: "TM" },
-  "oi":                { name: "Oi",                slug: "",                 hex: "FFD700", abbr: "OI" },
+  "tim":               { name: "TIM",               slug: "",                 hex: "003DA5", abbr: "TM", iconName: "phone" },
+  "oi":                { name: "Oi",                slug: "",                 hex: "FFD700", abbr: "OI", iconName: "phone" },
 };
 
 const APP_FALLBACK: AppBrand = {

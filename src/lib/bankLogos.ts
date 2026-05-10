@@ -10,6 +10,8 @@ export interface BankBrand {
   hex: string;
   /** Iniciais para o avatar de fallback. */
   abbr: string;
+  /** Nome de ícone do Lucide para fallback (preferido sobre abbr). */
+  iconName?: string;
 }
 
 // Chaves em lowercase. getBankBrand() faz match exato e por substring.
