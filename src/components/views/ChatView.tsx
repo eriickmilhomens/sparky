@@ -632,7 +632,7 @@ const ChatView = () => {
                     {msg.attachments.map((att, j) => (
                       <div key={j} className="rounded-xl overflow-hidden">
                         {att.type === "image" ? (
-                          <img src={att.data} alt={att.name} className="max-h-32 max-w-[200px] rounded-xl object-cover" />
+                          <img loading="lazy" decoding="async" src={att.data} alt={att.name} className="max-h-32 max-w-[200px] rounded-xl object-cover" />
                         ) : (
                           <div className="flex items-center gap-1.5 rounded-xl bg-foreground/10 px-2.5 py-1.5">
                             <FileText size={12} />
@@ -682,7 +682,7 @@ const ChatView = () => {
           {pendingAttachments.map((att, i) => (
             <div key={i} className="relative shrink-0 group">
               {att.type === "image" ? (
-                <img src={att.data} alt={att.name} className="h-14 w-14 rounded-xl object-cover border border-border/60" />
+                <img loading="lazy" decoding="async" src={att.data} alt={att.name} className="h-14 w-14 rounded-xl object-cover border border-border/60" />
               ) : (
                 <div className="h-14 w-14 rounded-xl bg-card border border-border/60 flex flex-col items-center justify-center gap-0.5">
                   <FileText size={16} className="text-muted-foreground" />

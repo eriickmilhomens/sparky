@@ -687,7 +687,7 @@ const AdminPanel = ({ onClose }: { onClose: () => void }) => {
                   <div key={user.id} className="card-zelo">
                     <div className="flex items-center gap-3">
                       {user.avatar_url ? (
-                        <img src={user.avatar_url} alt={user.name} className="h-10 w-10 rounded-full object-cover" />
+                        <img loading="lazy" decoding="async" src={user.avatar_url} alt={user.name} className="h-10 w-10 rounded-full object-cover" />
                       ) : (
                         <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-bold text-sm">
                           {user.name.charAt(0).toUpperCase()}
@@ -1311,7 +1311,7 @@ const AdminPanel = ({ onClose }: { onClose: () => void }) => {
 
             <div className="flex items-center gap-3">
               {selectedUser.avatar_url ? (
-                <img src={selectedUser.avatar_url} alt={selectedUser.name} className="h-12 w-12 rounded-full object-cover" />
+                <img loading="lazy" decoding="async" src={selectedUser.avatar_url} alt={selectedUser.name} className="h-12 w-12 rounded-full object-cover" />
               ) : (
                 <div className="h-12 w-12 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center text-white font-bold">
                   {selectedUser.name.charAt(0).toUpperCase()}

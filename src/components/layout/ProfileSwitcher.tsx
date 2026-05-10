@@ -308,7 +308,7 @@ const ProfileSwitcher = ({ trigger = "avatar" }: ProfileSwitcherProps = {}) => {
 
   const renderAvatar = (profile: Profile, size: string, textSize: string) => {
     if (profile.avatar) {
-      return <img src={profile.avatar} alt={profile.name} className={cn(size, "rounded-full object-cover")} />;
+      return <img loading="lazy" decoding="async" src={profile.avatar} alt={profile.name} className={cn(size, "rounded-full object-cover")} />;
     }
     return (
       <div className={cn(size, "rounded-full bg-gradient-to-br flex items-center justify-center font-bold text-white", textSize, profile.color)}>
@@ -386,7 +386,7 @@ const ProfileSwitcher = ({ trigger = "avatar" }: ProfileSwitcherProps = {}) => {
     const quote = inspirationalQuotes[Math.floor(Math.random() * inspirationalQuotes.length)];
     const renderGroupAvatar = (member: any, size: string, textSize: string) => {
       if (member.avatar_url) {
-        return <img src={member.avatar_url} alt={member.name} className={cn(size, "rounded-full object-cover")} />;
+        return <img loading="lazy" decoding="async" src={member.avatar_url} alt={member.name} className={cn(size, "rounded-full object-cover")} />;
       }
       return (
         <div className={cn(size, "rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center font-bold text-white", textSize)}>
@@ -832,7 +832,7 @@ const ProfileSwitcher = ({ trigger = "avatar" }: ProfileSwitcherProps = {}) => {
     const regularMembers = groupMembers.filter(m => !isGroupLeader(m));
     const renderMemberAvatar = (member: any, size: string, textSize: string) => {
       if (member.avatar_url) {
-        return <img src={member.avatar_url} alt={member.name} className={cn(size, "rounded-full object-cover")} />;
+        return <img loading="lazy" decoding="async" src={member.avatar_url} alt={member.name} className={cn(size, "rounded-full object-cover")} />;
       }
       return (
         <div className={cn(size, "rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center font-bold text-white", textSize)}>

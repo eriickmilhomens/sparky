@@ -276,7 +276,7 @@ const ScanReceiptModal = ({ open, onClose }: ScanReceiptModalProps) => {
           {step === "processing" && (
             <div className="flex flex-col items-center justify-center py-16 gap-4">
               {imageData && (
-                <img src={imageData} alt="Documento" className="w-32 h-32 rounded-xl object-cover border border-border opacity-50" />
+                <img loading="lazy" decoding="async" src={imageData} alt="Documento" className="w-32 h-32 rounded-xl object-cover border border-border opacity-50" />
               )}
               <Loader2 size={32} className="text-primary animate-spin" />
               <div className="text-center">
@@ -300,7 +300,7 @@ const ScanReceiptModal = ({ open, onClose }: ScanReceiptModalProps) => {
               )}
 
               {imageData && (
-                <img src={imageData} alt="Documento" className="w-full rounded-xl border border-border max-h-40 object-cover" />
+                <img loading="lazy" decoding="async" src={imageData} alt="Documento" className="w-full rounded-xl border border-border max-h-40 object-cover" />
               )}
 
               <div className="space-y-3">

@@ -420,7 +420,7 @@ const MembersView = () => {
               <div key={member.id} className={cn("flex items-center gap-3 px-4 py-3.5", memberIsLeader && "bg-warning/5")}>
                 <div className="relative">
                   {member.avatar_url ? (
-                    <img src={member.avatar_url} alt={member.name} className="h-10 w-10 rounded-full object-cover" />
+                    <img loading="lazy" decoding="async" src={member.avatar_url} alt={member.name} className="h-10 w-10 rounded-full object-cover" />
                   ) : (
                     <div className={`flex h-10 w-10 items-center justify-center rounded-full bg-gradient-to-br ${colors[index % colors.length]} text-sm font-bold`}>
                       {member.name.charAt(0).toUpperCase()}

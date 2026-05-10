@@ -347,7 +347,7 @@ const DocsView = () => {
             <button onClick={() => setPreviewUrl(null)} className="absolute -top-3 -right-3 bg-card rounded-full p-1.5 shadow-lg z-10">
               <X size={16} />
             </button>
-            <img src={previewUrl} alt="Preview" className="max-w-full max-h-[80vh] rounded-xl object-contain" />
+            <img loading="lazy" decoding="async" src={previewUrl} alt="Preview" className="max-w-full max-h-[80vh] rounded-xl object-contain" />
           </div>
         </div>
       )}
