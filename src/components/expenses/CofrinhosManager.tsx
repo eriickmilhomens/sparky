@@ -133,7 +133,7 @@ const CofrinhosManager = ({ open, onClose, focusId }: Props) => {
                 type="text"
                 inputMode="numeric"
                 value={amount}
-                onChange={(e) => handleBRLChange(e.target.value, setAmount)}
+                onChange={(e) => setAmount(handleBRLChange(e.target.value))}
                 placeholder="R$ 0,00"
                 autoFocus
                 className="w-full rounded-2xl bg-muted/40 border border-border/50 px-4 py-4 text-right text-2xl font-display font-bold tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/40"
@@ -208,7 +208,7 @@ const CofrinhosManager = ({ open, onClose, focusId }: Props) => {
 
             <div className="space-y-2">
               <label className="text-label px-1">META (R$)</label>
-              <input type="text" inputMode="numeric" value={target} onChange={(e) => handleBRLChange(e.target.value, setTarget)} placeholder="R$ 0,00"
+              <input type="text" inputMode="numeric" value={target} onChange={(e) => setTarget(handleBRLChange(e.target.value))} placeholder="R$ 0,00"
                 className="w-full rounded-2xl bg-muted/40 border border-border/50 px-4 py-3 text-right text-lg font-display font-bold tabular-nums focus:outline-none focus:ring-2 focus:ring-primary/40" />
             </div>
 
