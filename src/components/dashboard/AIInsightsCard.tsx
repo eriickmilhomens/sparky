@@ -2,7 +2,6 @@ import { useEffect, useMemo, useState } from "react";
 import { Sparkles, RefreshCw, AlertTriangle, TrendingUp, Lightbulb, Eye } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useFinancialData } from "@/hooks/useFinancialData";
-import { getDailyBudget, getNormalizedMonthlyTotals } from "@/lib/financialCalculations";
 import { loadCofrinhos } from "@/lib/cofrinhos";
 
 interface Insight {
