@@ -4,6 +4,8 @@ import WidgetGrid from "@/components/dashboard/WidgetGrid";
 import SpendingOverview from "@/components/dashboard/SpendingOverview";
 import SuggestionsCard from "@/components/dashboard/SuggestionsCard";
 import BiggestExpenseCard from "@/components/dashboard/BiggestExpenseCard";
+import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
+import CofrinhosCard from "@/components/dashboard/CofrinhosCard";
 import { useFinancialData } from "@/hooks/useFinancialData";
 
 const SkeletonCard = () => (
@@ -51,11 +53,17 @@ const DashboardView = () => {
       {/* Insights priority */}
       <SuggestionsCard />
 
+      {/* AI proactive insights */}
+      <AIInsightsCard />
+
       {/* Hero balance — referência IMG_2590 */}
       <BalanceHero onVisibilityChange={handleVisibilityChange} />
 
       {/* Apple-watch style mini-widgets — referência IMG_2589 */}
       <WidgetGrid hideValues={hideValues} />
+
+      {/* Cofrinhos / Savings jars */}
+      <CofrinhosCard />
 
       {/* Existing rich detail blocks */}
       <SpendingOverview hideValues={hideValues} />
