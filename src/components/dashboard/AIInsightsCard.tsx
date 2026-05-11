@@ -34,8 +34,8 @@ const AIInsightsCard = () => {
   const context = useMemo(() => {
     const now = new Date();
     const daysInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-    const daysLeft = daysInMonth - now.getDate() + 1;
-    const dailyBudget = getDailyBudget(available, daysLeft);
+    const daysLeft = Math.max(1, daysInMonth - now.getDate() + 1);
+    const dailyBudget = available > 0 ? available / daysLeft : 0;
 
     // Top 3 categories from current month expense transactions
     const monthStart = new Date(now.getFullYear(), now.getMonth(), 1);
