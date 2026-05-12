@@ -4,7 +4,7 @@ import { cn } from "@/lib/utils";
 import { lazyWithRetry } from "@/lib/lazyWithRetry";
 
 const AddExpenseModal = lazyWithRetry(() => import("@/components/expenses/AddExpenseModal"));
-const FinancialSettingsModal = lazyWithRetry(() => import("@/components/expenses/FinancialSettingsModal"));
+const SettingsModal = lazyWithRetry(() => import("@/components/expenses/SettingsModal"));
 const CreditCardManager = lazyWithRetry(() => import("@/components/expenses/CreditCardManager"));
 const VisaoGeralTab = lazyWithRetry(() => import("@/components/expenses/VisaoGeralTab"));
 const ExtratoTab = lazyWithRetry(() => import("@/components/expenses/ExtratoTab"));
@@ -86,7 +86,7 @@ const ExpensesView = () => {
 
       <Suspense fallback={null}>
         {modalOpen && <AddExpenseModal open={modalOpen} onClose={() => setModalOpen(false)} type="expense" />}
-        {settingsOpen && <FinancialSettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />}
+        {settingsOpen && <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />}
         {cardsOpen && <CreditCardManager open={cardsOpen} onClose={() => setCardsOpen(false)} />}
       </Suspense>
     </>
