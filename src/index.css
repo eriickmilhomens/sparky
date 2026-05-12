@@ -126,7 +126,7 @@
     -ms-content-zooming: none;
     padding: 0;
     margin: 0;
-    background-color: #0b0d12 !important;
+    background-color: #000000 !important;
   }
 
   html {
@@ -136,7 +136,7 @@
     overflow: hidden;
     padding: 0;
     margin: 0;
-    background-color: #0b0d12 !important;
+    background-color: #000000 !important;
   }
 
   #root {
@@ -202,7 +202,7 @@
   }
 
   .dark .card-zelo {
-    background: hsl(220 10% 11% / 0.55);
+    background: hsl(0 0% 7% / 0.7);
     border: 1px solid hsl(220 7% 26% / 0.4);
     box-shadow:
       0 2px 8px hsl(0 0% 0% / 0.3),
@@ -252,8 +252,8 @@
   }
 
   .dark .liquid-dock {
-    background: hsl(220 8% 13% / 0.75);
-    border: 1px solid hsl(220 7% 22% / 0.55);
+    background: hsl(0 0% 7% / 0.78);
+    border: 1px solid hsl(0 0% 18% / 0.6);
     box-shadow:
       0 24px 48px -16px hsl(0 0% 0% / 0.65),
       0 8px 20px -12px hsl(0 0% 0% / 0.45),
