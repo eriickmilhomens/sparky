@@ -360,11 +360,13 @@ const ToggleInline = ({ label, value, onChange }: any) => (
 
 /* ────────── Root settings screen ────────── */
 const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: Screen) => void }) => {
-  const { profile, isDemo } = useProfile();
+  const { profile, updateProfile, isDemo } = useProfile();
   const { members } = useGroupMembers();
   const { clearAll } = useFinancialData();
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const memberCount = useMemo(() => members?.length ?? 1, [members]);
 
@@ -382,6 +384,41 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
     if (isDemo) localStorage.removeItem("sparky-demo-mode");
     else await supabase.auth.signOut();
     window.location.href = "/login";
+  };
+
+  const handleAvatarPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = "";
+    if (!file) return;
+    setUploading(true);
+    try {
+      // Resize + compress to <=400x400 jpeg base64
+      const dataUrl: string = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(reader.result as string);
+        reader.onerror = () => reject(new Error("read"));
+        reader.readAsDataURL(file);
+      });
+      const img = new Image();
+      img.src = dataUrl;
+      await new Promise(r => { img.onload = r; });
+      const max = 400;
+      const size = Math.min(img.width, img.height);
+      const sx = (img.width - size) / 2;
+      const sy = (img.height - size) / 2;
+      const canvas = document.createElement("canvas");
+      canvas.width = max; canvas.height = max;
+      const ctx = canvas.getContext("2d")!;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(img, sx, sy, size, size, 0, 0, max, max);
+      const out = canvas.toDataURL("image/jpeg", 0.82);
+      await updateProfile({ avatar_url: out });
+      toast.success("Foto atualizada");
+    } catch {
+      toast.error("Erro ao atualizar foto");
+    } finally {
+      setUploading(false);
+    }
   };
 
   return (
@@ -404,12 +441,14 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
               {initials}
             </div>
           )}
-          <button onClick={() => navigate("profile")}
-            className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-card border border-border flex items-center justify-center active:scale-90 transition-transform">
-            <Pencil size={13} />
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarPick} />
+          <button onClick={() => fileRef.current?.click()} disabled={uploading}
+            className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-accent text-accent-foreground border border-border flex items-center justify-center active:scale-90 transition-transform disabled:opacity-50">
+            <Camera size={13} />
           </button>
         </div>
         <h2 className="mt-3 text-xl font-display font-bold tracking-tight">{profile?.name || "Usuário"}</h2>
+        {uploading && <p className="text-[11px] text-muted-foreground mt-1">Enviando…</p>}
       </div>
 
       {/* Stat cards */}
