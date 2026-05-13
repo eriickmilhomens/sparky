@@ -484,12 +484,7 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
         <Row icon={User} label="Perfil" onClick={() => navigate("profile")} />
         <Row icon={SlidersHorizontal} label="Preferências" onClick={() => navigate("preferences")} />
         <Row icon={CreditCard} label="Assinatura" onClick={() => navigate("subscription")} />
-        <Row icon={KeyRound} label="Convite e grupo" onClick={() => {
-          if (profile?.invite_code) {
-            navigator.clipboard.writeText(profile.invite_code);
-            toast.success(`Código ${profile.invite_code} copiado`);
-          }
-        }} />
+        <Row icon={KeyRound} label="Convite e grupo" onClick={() => navigate("invite")} />
       </div>
 
       {/* Segurança */}
