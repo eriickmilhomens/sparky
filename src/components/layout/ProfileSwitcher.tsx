@@ -12,6 +12,7 @@ interface ProfileSwitcherProps {
   trigger?: "avatar" | "hamburger";
 }
 import AdminPanel from "@/components/admin/AdminPanel";
+import SettingsModal from "@/components/expenses/SettingsModal";
 import { useDockVisibility } from "@/hooks/useDockVisibility";
 import { cn } from "@/lib/utils";
 import { useNavigate } from "react-router-dom";
@@ -48,7 +49,7 @@ const inspirationalQuotes = [
   "🔥 Disciplina hoje, colheita amanhã.",
 ];
 
-type SubView = null | "profile" | "prizes" | "members" | "ranking" | "admin" | "support";
+type SubView = null | "profile" | "prizes" | "members" | "ranking" | "admin" | "support" | "settings";
 
 const ProfileSwitcher = ({ trigger = "avatar" }: ProfileSwitcherProps = {}) => {
   const navigate = useNavigate();
@@ -1032,6 +1033,11 @@ const ProfileSwitcher = ({ trigger = "avatar" }: ProfileSwitcherProps = {}) => {
     return renderLayer(<AdminPanel onClose={() => setSubView(null)} />);
   }
 
+  // Sub-view: Settings
+  if (subView === "settings") {
+    return renderLayer(<SettingsModal open onClose={() => setSubView(null)} />);
+  }
+
   return (
     <div className="relative">
       <button onClick={() => setOpen(!open)} className="flex items-center gap-1.5 active:scale-95 transition-transform" aria-label={trigger === "hamburger" ? "Abrir menu" : "Abrir perfil"}>
@@ -1083,6 +1089,10 @@ const ProfileSwitcher = ({ trigger = "avatar" }: ProfileSwitcherProps = {}) => {
             <button onClick={() => openSubView("profile")} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-muted/50 transition-colors active:scale-[0.97]">
               <User size={16} className="text-muted-foreground" />
               <span className="text-sm font-medium">Meu Perfil</span>
+            </button>
+            <button onClick={() => openSubView("settings")} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-muted/50 transition-colors active:scale-[0.97]">
+              <Settings size={16} className="text-muted-foreground" />
+              <span className="text-sm font-medium">Configurações</span>
             </button>
             <button onClick={() => openSubView("ranking")} className="flex w-full items-center gap-3 rounded-xl px-3 py-2.5 text-left hover:bg-muted/50 transition-colors active:scale-[0.97]">
               <Trophy size={16} className="text-muted-foreground" />
