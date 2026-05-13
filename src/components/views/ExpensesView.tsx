@@ -23,7 +23,7 @@ const TabSkeleton = () => (
 
 const ExpensesView = () => {
   const [modalOpen, setModalOpen] = useState(false);
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  
   const [cardsOpen, setCardsOpen] = useState(false);
   const [activeTab, setActiveTab] = useState("Visão Geral");
 
@@ -47,16 +47,10 @@ const ExpensesView = () => {
       <div className="px-4 pb-24 space-y-4">
         <div className="flex items-center justify-between pt-3">
           <h1 className="text-xl font-display font-bold">Despesas</h1>
-          <div className="flex items-center gap-0.5">
-            <button onClick={() => setSettingsOpen(true)}
-              className="rounded-xl p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted/50 active:scale-95 transition-transform will-change-transform">
-              <Settings size={17} />
-            </button>
-            <button onClick={() => setCardsOpen(true)}
-              className="rounded-xl p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted/50 active:scale-95 transition-transform will-change-transform">
-              <CreditCard size={17} />
-            </button>
-          </div>
+          <button onClick={() => setCardsOpen(true)}
+            className="rounded-xl p-2.5 text-muted-foreground hover:text-foreground hover:bg-muted/50 active:scale-95 transition-transform will-change-transform">
+            <CreditCard size={17} />
+          </button>
         </div>
 
         <div className="flex gap-1 rounded-2xl bg-muted/40 p-1 border border-border/50">
@@ -85,7 +79,6 @@ const ExpensesView = () => {
 
       <Suspense fallback={null}>
         {modalOpen && <AddExpenseModal open={modalOpen} onClose={() => setModalOpen(false)} type="expense" />}
-        {settingsOpen && <SettingsModal open={settingsOpen} onClose={() => setSettingsOpen(false)} />}
         {cardsOpen && <CreditCardManager open={cardsOpen} onClose={() => setCardsOpen(false)} />}
       </Suspense>
     </>
