@@ -629,7 +629,8 @@ const SettingsModal = ({ open, onClose }: Props) => {
         {screen === "profile" && <ProfileScreen onBack={() => setScreen("root")} />}
         {screen === "preferences" && <PreferencesScreen onBack={() => setScreen("root")} />}
         {screen === "subscription" && <SubscriptionScreen onBack={() => setScreen("root")} />}
-        {screen === "security" && <SecurityScreen onBack={() => setScreen("root")} />}
+       {screen === "security" && <SecurityScreen onBack={() => setScreen("root")} />}
+        {screen === "invite" && <InviteScreen onBack={() => setScreen("root")} />}
       </div>
     </div>
   );
