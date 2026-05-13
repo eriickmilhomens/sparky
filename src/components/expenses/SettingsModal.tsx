@@ -358,6 +358,71 @@ const ToggleInline = ({ label, value, onChange }: any) => (
   </div>
 );
 
+/* ────────── Invite & group screen ────────── */
+const InviteScreen = ({ onBack }: { onBack: () => void }) => {
+  const { profile } = useProfile();
+  const { members, leader, isLeader } = useGroupMembers();
+  const code = profile?.invite_code || "—";
+  const inviteUrl = `${window.location.origin}/onboarding?code=${code}`;
+
+  const copyCode = () => {
+    navigator.clipboard.writeText(code);
+    toast.success("Código copiado");
+  };
+  const shareInvite = async () => {
+    const text = `Entre no meu grupo no Sparky com o código ${code}`;
+    if (navigator.share) {
+      try { await navigator.share({ title: "Convite Sparky", text, url: inviteUrl }); } catch {}
+    } else {
+      navigator.clipboard.writeText(`${text}\n${inviteUrl}`);
+      toast.success("Convite copiado");
+    }
+  };
+
+  return (
+    <ScreenShell title="Convite e grupo" onBack={onBack} subtitle="Compartilhe seu código e veja quem está no grupo">
+      <SectionLabel>Seu código</SectionLabel>
+      <Card>
+        <p className="text-[11px] text-muted-foreground mb-2">Use este código para convidar pessoas para o seu grupo financeiro.</p>
+        <div className="flex items-center justify-between rounded-xl bg-muted/40 px-4 py-3 mb-3">
+          <span className="font-mono text-lg font-bold tracking-widest">{code}</span>
+          <button onClick={copyCode} className="rounded-lg p-2 hover:bg-muted active:scale-95 transition-transform">
+            <Copy size={16} />
+          </button>
+        </div>
+        <button onClick={shareInvite}
+          className="w-full flex items-center justify-center gap-2 rounded-xl bg-primary py-3 text-sm font-semibold text-primary-foreground active:scale-[0.98] transition-transform">
+          <Share2 size={15} /> Compartilhar convite
+        </button>
+      </Card>
+
+      <SectionLabel>Membros ({members.length})</SectionLabel>
+      <div className="space-y-2">
+        {members.map((m) => {
+          const lead = isLeader(m);
+          const ini = (m.name || "?").split(" ").slice(0, 2).map(p => p[0]).join("").toUpperCase();
+          return (
+            <div key={m.id} className="flex items-center gap-3 rounded-2xl border border-border/60 bg-card/60 px-4 py-3">
+              {m.avatar_url ? (
+                <img src={m.avatar_url} alt={m.name} className="h-10 w-10 rounded-full object-cover" />
+              ) : (
+                <div className="h-10 w-10 rounded-full bg-gradient-to-br from-primary to-accent flex items-center justify-center text-xs font-bold text-primary-foreground">{ini}</div>
+              )}
+              <div className="flex-1 min-w-0">
+                <p className="text-sm font-semibold truncate">{m.name}</p>
+                <p className="text-[11px] text-muted-foreground truncate">{m.email || "—"}</p>
+              </div>
+              <span className={cn("text-[10px] font-semibold rounded-full px-2 py-0.5",
+                lead ? "bg-warning/15 text-warning" : "bg-muted text-muted-foreground")}>
+                {lead ? "Líder" : "Membro"}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+    </ScreenShell>
+  );
+};
 /* ────────── Root settings screen ────────── */
 const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: Screen) => void }) => {
   const { profile, updateProfile, isDemo } = useProfile();
