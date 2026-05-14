@@ -507,6 +507,8 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
   const [confirmClear, setConfirmClear] = useState(false);
   const [confirmLogout, setConfirmLogout] = useState(false);
   const [uploading, setUploading] = useState(false);
+  const [cropSrc, setCropSrc] = useState<string | null>(null);
+  const [reviewOpen, setReviewOpen] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const memberCount = useMemo(() => members?.length ?? 1, [members]);
@@ -527,33 +529,25 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
     window.location.href = "/login";
   };
 
-  const handleAvatarPick = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFilePick = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     e.target.value = "";
     if (!file) return;
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error("Imagem muito grande (máx. 10MB)");
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => setCropSrc(reader.result as string);
+    reader.onerror = () => toast.error("Não foi possível ler a imagem");
+    reader.readAsDataURL(file);
+  };
+
+  const handleCropConfirm = async (dataUrl: string) => {
+    setCropSrc(null);
     setUploading(true);
     try {
-      // Resize + compress to <=400x400 jpeg base64
-      const dataUrl: string = await new Promise((resolve, reject) => {
-        const reader = new FileReader();
-        reader.onload = () => resolve(reader.result as string);
-        reader.onerror = () => reject(new Error("read"));
-        reader.readAsDataURL(file);
-      });
-      const img = new Image();
-      img.src = dataUrl;
-      await new Promise(r => { img.onload = r; });
-      const max = 400;
-      const size = Math.min(img.width, img.height);
-      const sx = (img.width - size) / 2;
-      const sy = (img.height - size) / 2;
-      const canvas = document.createElement("canvas");
-      canvas.width = max; canvas.height = max;
-      const ctx = canvas.getContext("2d")!;
-      ctx.imageSmoothingQuality = "high";
-      ctx.drawImage(img, sx, sy, size, size, 0, 0, max, max);
-      const out = canvas.toDataURL("image/jpeg", 0.82);
-      await updateProfile({ avatar_url: out });
+      await updateProfile({ avatar_url: dataUrl });
       toast.success("Foto atualizada");
     } catch {
       toast.error("Erro ao atualizar foto");
@@ -582,7 +576,7 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
               {initials}
             </div>
           )}
-          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleAvatarPick} />
+          <input ref={fileRef} type="file" accept="image/*" className="hidden" onChange={handleFilePick} />
           <button onClick={() => fileRef.current?.click()} disabled={uploading}
             className="absolute -bottom-1 -right-1 h-8 w-8 rounded-full bg-accent text-accent-foreground border border-border flex items-center justify-center active:scale-90 transition-transform disabled:opacity-50">
             <Camera size={13} />
@@ -609,10 +603,7 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
 
       {/* Avalie */}
       <button
-        onClick={() => {
-          if (navigator.share) navigator.share({ title: "Sparky Finance", url: window.location.origin }).catch(() => {});
-          else { navigator.clipboard.writeText(window.location.origin); toast.success("Link copiado!"); }
-        }}
+        onClick={() => setReviewOpen(true)}
         className="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-card/60 px-4 py-3.5 active:scale-[0.985] transition-transform">
         <Star size={18} className="text-accent" />
         <span className="flex-1 text-sm font-medium text-left">Avalie o Sparky</span>
@@ -648,6 +639,12 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
       </button>
 
       {/* Modals */}
+      {cropSrc && (
+        <AvatarCropper src={cropSrc} onCancel={() => setCropSrc(null)} onConfirm={handleCropConfirm} />
+      )}
+      {reviewOpen && (
+        <ReviewModal onClose={() => setReviewOpen(false)} />
+      )}
       {confirmClear && (
         <ConfirmDialog
           icon={AlertTriangle} title="Apagar todos os dados?"
@@ -660,6 +657,253 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
           desc="Você precisará fazer login novamente."
           confirmLabel="Sair" onConfirm={handleLogout} onCancel={() => setConfirmLogout(false)} />
       )}
+    </div>
+  );
+};
+
+/* ────────── Avatar cropper ────────── */
+const AvatarCropper = ({ src, onCancel, onConfirm }: { src: string; onCancel: () => void; onConfirm: (d: string) => void }) => {
+  const FRAME = 280;
+  const OUTPUT = 400;
+  const imgRef = useRef<HTMLImageElement | null>(null);
+  const [loaded, setLoaded] = useState(false);
+  const [natural, setNatural] = useState({ w: 0, h: 0 });
+  const [scale, setScale] = useState(1);
+  const [minScale, setMinScale] = useState(1);
+  const [offset, setOffset] = useState({ x: 0, y: 0 });
+  const drag = useRef<{ active: boolean; sx: number; sy: number; ox: number; oy: number }>({ active: false, sx: 0, sy: 0, ox: 0, oy: 0 });
+  const pinch = useRef<{ active: boolean; dist: number; baseScale: number }>({ active: false, dist: 0, baseScale: 1 });
+
+  const onImgLoad = (e: React.SyntheticEvent<HTMLImageElement>) => {
+    const i = e.currentTarget;
+    setNatural({ w: i.naturalWidth, h: i.naturalHeight });
+    const min = FRAME / Math.min(i.naturalWidth, i.naturalHeight);
+    setMinScale(min);
+    setScale(min);
+    setOffset({
+      x: (FRAME - i.naturalWidth * min) / 2,
+      y: (FRAME - i.naturalHeight * min) / 2,
+    });
+    setLoaded(true);
+  };
+
+  const clamp = (s: number, x: number, y: number) => {
+    const dispW = natural.w * s;
+    const dispH = natural.h * s;
+    const minX = FRAME - dispW;
+    const minY = FRAME - dispH;
+    return {
+      x: Math.min(0, Math.max(minX, x)),
+      y: Math.min(0, Math.max(minY, y)),
+    };
+  };
+
+  const setScaleAround = (newScale: number, cx = FRAME / 2, cy = FRAME / 2) => {
+    const ns = Math.max(minScale, Math.min(minScale * 4, newScale));
+    const k = ns / scale;
+    const nx = cx - (cx - offset.x) * k;
+    const ny = cy - (cy - offset.y) * k;
+    const c = clamp(ns, nx, ny);
+    setScale(ns);
+    setOffset(c);
+  };
+
+  const pointerDown = (e: React.PointerEvent) => {
+    (e.currentTarget as HTMLDivElement).setPointerCapture(e.pointerId);
+    drag.current = { active: true, sx: e.clientX, sy: e.clientY, ox: offset.x, oy: offset.y };
+  };
+  const pointerMove = (e: React.PointerEvent) => {
+    if (!drag.current.active) return;
+    const dx = e.clientX - drag.current.sx;
+    const dy = e.clientY - drag.current.sy;
+    setOffset(clamp(scale, drag.current.ox + dx, drag.current.oy + dy));
+  };
+  const pointerUp = (e: React.PointerEvent) => {
+    drag.current.active = false;
+    try { (e.currentTarget as HTMLDivElement).releasePointerCapture(e.pointerId); } catch {}
+  };
+  const onWheel = (e: React.WheelEvent) => {
+    e.preventDefault();
+    const factor = e.deltaY < 0 ? 1.08 : 0.92;
+    const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
+    setScaleAround(scale * factor, e.clientX - rect.left, e.clientY - rect.top);
+  };
+
+  const confirm = () => {
+    const canvas = document.createElement("canvas");
+    canvas.width = OUTPUT;
+    canvas.height = OUTPUT;
+    const ctx = canvas.getContext("2d")!;
+    ctx.imageSmoothingQuality = "high";
+    // Source rect in image-natural pixels = visible area in frame
+    const sx = -offset.x / scale;
+    const sy = -offset.y / scale;
+    const sSize = FRAME / scale;
+    ctx.drawImage(imgRef.current!, sx, sy, sSize, sSize, 0, 0, OUTPUT, OUTPUT);
+    onConfirm(canvas.toDataURL("image/jpeg", 0.85));
+  };
+
+  return (
+    <div className="fixed inset-0 z-[90] flex items-center justify-center px-5">
+      <div className="absolute inset-0 bg-black/85 backdrop-blur-md" onClick={onCancel} />
+      <div className="relative w-full max-w-sm rounded-3xl bg-card border border-border p-5 space-y-4 animate-scale-in">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold">Ajustar foto</h3>
+          <button onClick={onCancel} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center active:scale-95">
+            <X size={16} />
+          </button>
+        </div>
+
+        <div className="flex justify-center">
+          <div
+            className="relative rounded-2xl bg-black overflow-hidden touch-none select-none"
+            style={{ width: FRAME, height: FRAME }}
+            onPointerDown={pointerDown}
+            onPointerMove={pointerMove}
+            onPointerUp={pointerUp}
+            onPointerCancel={pointerUp}
+            onWheel={onWheel}
+          >
+            <img
+              ref={imgRef}
+              src={src}
+              alt=""
+              draggable={false}
+              onLoad={onImgLoad}
+              style={{
+                position: "absolute",
+                left: 0, top: 0,
+                transformOrigin: "0 0",
+                transform: `translate(${offset.x}px, ${offset.y}px) scale(${scale})`,
+                width: natural.w || "auto",
+                height: natural.h || "auto",
+                maxWidth: "none",
+                pointerEvents: "none",
+              }}
+            />
+            {/* Circular mask overlay */}
+            <div className="pointer-events-none absolute inset-0"
+              style={{
+                boxShadow: `0 0 0 9999px hsl(var(--background) / 0.6)`,
+                clipPath: "circle(50% at 50% 50%)",
+                background: "transparent",
+              }} />
+            <div className="pointer-events-none absolute inset-0 rounded-full border-2 border-white/80"
+              style={{ borderRadius: "50%" }} />
+          </div>
+        </div>
+
+        <div className="flex items-center gap-3 px-1">
+          <ZoomIn size={16} className="opacity-70" />
+          <input
+            type="range"
+            min={minScale}
+            max={minScale * 4}
+            step={0.001}
+            value={scale}
+            onChange={(e) => setScaleAround(Number(e.target.value))}
+            className="flex-1 accent-accent h-1.5"
+          />
+        </div>
+
+        <div className="flex gap-2 pt-1">
+          <button onClick={onCancel}
+            className="flex-1 rounded-2xl border border-border py-3 text-sm font-medium active:scale-[0.97] transition-all">
+            Cancelar
+          </button>
+          <button onClick={confirm} disabled={!loaded}
+            className="flex-1 rounded-2xl bg-primary text-primary-foreground py-3 text-sm font-semibold active:scale-[0.97] transition-all flex items-center justify-center gap-1.5 disabled:opacity-60">
+            <Check size={16} /> Salvar
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/* ────────── Review modal ────────── */
+const ReviewModal = ({ onClose }: { onClose: () => void }) => {
+  const [rating, setRating] = useState(0);
+  const [hover, setHover] = useState(0);
+  const [comment, setComment] = useState("");
+  const [sending, setSending] = useState(false);
+
+  const submit = async () => {
+    if (!rating) { toast.error("Escolha de 1 a 5 estrelas"); return; }
+    setSending(true);
+    try {
+      // Persist locally; backend feedback table is out of scope here
+      const log = JSON.parse(localStorage.getItem("sparky-reviews") || "[]");
+      log.push({ rating, comment, at: new Date().toISOString() });
+      localStorage.setItem("sparky-reviews", JSON.stringify(log));
+      if (rating >= 4 && navigator.share) {
+        try {
+          await navigator.share({
+            title: "Sparky Finance",
+            text: "Estou usando o Sparky para organizar minhas finanças — recomendo!",
+            url: window.location.origin,
+          });
+        } catch {}
+      }
+      toast.success("Obrigado pela sua avaliação!");
+      onClose();
+    } catch {
+      toast.error("Não foi possível enviar agora");
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const display = hover || rating;
+  const labels = ["", "Muito ruim", "Ruim", "Ok", "Boa", "Excelente"];
+
+  return (
+    <div className="fixed inset-0 z-[80] flex items-center justify-center px-6">
+      <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={onClose} />
+      <div className="relative w-full max-w-sm rounded-3xl bg-card border border-border p-6 space-y-4 animate-scale-in">
+        <div className="flex items-center justify-between">
+          <h3 className="text-base font-bold">Avalie o Sparky</h3>
+          <button onClick={onClose} className="h-8 w-8 rounded-full bg-muted flex items-center justify-center active:scale-95">
+            <X size={16} />
+          </button>
+        </div>
+        <p className="text-sm text-muted-foreground leading-relaxed">
+          Sua opinião ajuda a melhorar o app. Quantas estrelas você daria?
+        </p>
+        <div className="flex justify-center gap-1.5 py-2">
+          {[1, 2, 3, 4, 5].map((n) => (
+            <button
+              key={n}
+              onMouseEnter={() => setHover(n)}
+              onMouseLeave={() => setHover(0)}
+              onClick={() => setRating(n)}
+              className="p-1 active:scale-90 transition-transform"
+            >
+              <Star
+                size={32}
+                className={cn("transition-colors", n <= display ? "fill-accent text-accent" : "text-muted-foreground/40")}
+              />
+            </button>
+          ))}
+        </div>
+        <p className="text-center text-xs font-medium text-muted-foreground h-4">
+          {labels[display] || ""}
+        </p>
+        <textarea
+          value={comment}
+          onChange={(e) => setComment(e.target.value)}
+          placeholder="Conte o que você achou (opcional)"
+          rows={3}
+          className="w-full rounded-2xl border border-border/60 bg-muted/40 px-4 py-3 text-sm outline-none focus:border-accent transition resize-none"
+        />
+        <button
+          onClick={submit}
+          disabled={sending || !rating}
+          className="w-full rounded-2xl bg-primary text-primary-foreground py-3 text-sm font-semibold active:scale-[0.98] transition disabled:opacity-50"
+        >
+          {sending ? "Enviando…" : "Enviar avaliação"}
+        </button>
+      </div>
     </div>
   );
 };
