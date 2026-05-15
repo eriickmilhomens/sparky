@@ -159,6 +159,24 @@ const ChatView = () => {
     });
   }, []);
 
+  // Auto-send prefilled question coming from the Sparky scan overlay
+  const prefillHandledRef = useRef(false);
+  useEffect(() => {
+    if (prefillHandledRef.current) return;
+    let prefill: string | null = null;
+    try { prefill = sessionStorage.getItem("sparky-prefill"); } catch {}
+    if (!prefill) return;
+    prefillHandledRef.current = true;
+    try { sessionStorage.removeItem("sparky-prefill"); } catch {}
+    // Ensure we have an active conversation, then send
+    const id = activeId || crypto.randomUUID();
+    if (!activeId) setActiveId(id);
+    setMessages([]);
+    setPendingAttachments([]);
+    setTimeout(() => { sendDirect(prefill!); }, 60);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);

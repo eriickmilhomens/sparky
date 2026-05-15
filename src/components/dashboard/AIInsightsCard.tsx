@@ -173,8 +173,8 @@ const AIInsightsCard = () => {
         const Icon = cfg.Icon;
         return (
           <div key={i} className={`card-zelo fade-in-up stagger-${(i % 3) + 1} flex items-start gap-3 border ${cfg.ring}`}>
-            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${cfg.bg} text-lg`}>
-              {ins.icon || <Icon size={16} />}
+            <div className={`flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${cfg.bg} text-primary`}>
+              <Icon size={18} strokeWidth={2.2} />
             </div>
             <div className="flex-1 min-w-0">
               <p className="text-sm font-semibold leading-tight">{ins.title}</p>

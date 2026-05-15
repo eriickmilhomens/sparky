@@ -52,20 +52,32 @@ const DashboardView = () => {
 
 
       {/* AI proactive insights */}
-      <AIInsightsCard />
+      <div data-sparky-prompt="Pode me explicar melhor esses insights da IA?" data-sparky-label="Explicar insights">
+        <AIInsightsCard />
+      </div>
 
       {/* Hero balance — referência IMG_2590 */}
-      <BalanceHero onVisibilityChange={handleVisibilityChange} />
+      <div data-sparky-prompt="Como está meu saldo este mês e o que posso melhorar?" data-sparky-label="Analisar meu saldo">
+        <BalanceHero onVisibilityChange={handleVisibilityChange} />
+      </div>
 
       {/* Apple-watch style mini-widgets — referência IMG_2589 */}
-      <WidgetGrid hideValues={hideValues} />
+      <div data-sparky-prompt="O que esses indicadores rápidos dizem sobre minhas finanças?" data-sparky-label="Entender meus widgets">
+        <WidgetGrid hideValues={hideValues} />
+      </div>
 
       {/* Cofrinhos / Savings jars */}
-      <CofrinhosCard />
+      <div data-sparky-prompt="Como estão meus cofrinhos e quanto preciso guardar por mês?" data-sparky-label="Avaliar meus cofrinhos">
+        <CofrinhosCard />
+      </div>
 
       {/* Existing rich detail blocks */}
-      <SpendingOverview hideValues={hideValues} />
-      <BiggestExpenseCard hideValues={hideValues} />
+      <div data-sparky-prompt="Em quais categorias eu mais gastei este mês?" data-sparky-label="Analisar meus gastos">
+        <SpendingOverview hideValues={hideValues} />
+      </div>
+      <div data-sparky-prompt="Por que essa foi minha maior despesa? Como evitar próximas?" data-sparky-label="Investigar maior despesa">
+        <BiggestExpenseCard hideValues={hideValues} />
+      </div>
     </div>
   );
 };

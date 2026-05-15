@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import TopTabs from "@/components/layout/TopTabs";
 import SparkyFAB from "@/components/layout/SparkyFAB";
+import SparkyScan from "@/components/layout/SparkyScan";
 import Header from "@/components/layout/Header";
 import { syncLocalDataOwner } from "@/lib/userLocalData";
 import { isSessionExpired, clearRememberedSession, markSessionRemembered, hasRememberedSessionMarker } from "@/lib/sessionTimer";
@@ -18,6 +19,7 @@ const ChatView = lazyWithRetry(() => import("@/components/views/ChatView"));
 
 const Index = () => {
   const [activeTab, setActiveTab] = useState("home");
+  const [scanOpen, setScanOpen] = useState(false);
   const [ready, setReady] = useState(false);
   const readyRef = useRef(false);
   const [authChecked, setAuthChecked] = useState(false);
@@ -316,8 +318,17 @@ const Index = () => {
         </Suspense>
       </div>
       {activeTab !== 'chat' && (
-        <SparkyFAB onClick={() => handleTabChange('chat')} />
+        <SparkyFAB onClick={() => setScanOpen(true)} hidden={scanOpen} />
       )}
+      <SparkyScan
+        open={scanOpen}
+        onClose={() => setScanOpen(false)}
+        onPick={(prompt) => {
+          try { sessionStorage.setItem("sparky-prefill", prompt); } catch {}
+          setScanOpen(false);
+          handleTabChange('chat');
+        }}
+      />
     </div>
   );
 };
