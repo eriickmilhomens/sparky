@@ -318,8 +318,17 @@ const Index = () => {
         </Suspense>
       </div>
       {activeTab !== 'chat' && (
-        <SparkyFAB onClick={() => handleTabChange('chat')} />
+        <SparkyFAB onClick={() => setScanOpen(true)} hidden={scanOpen} />
       )}
+      <SparkyScan
+        open={scanOpen}
+        onClose={() => setScanOpen(false)}
+        onPick={(prompt) => {
+          try { sessionStorage.setItem("sparky-prefill", prompt); } catch {}
+          setScanOpen(false);
+          handleTabChange('chat');
+        }}
+      />
     </div>
   );
 };
