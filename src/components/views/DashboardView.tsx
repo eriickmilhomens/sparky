@@ -5,7 +5,6 @@ import SpendingOverview from "@/components/dashboard/SpendingOverview";
 import BiggestExpenseCard from "@/components/dashboard/BiggestExpenseCard";
 import AIInsightsCard from "@/components/dashboard/AIInsightsCard";
 import CofrinhosCard from "@/components/dashboard/CofrinhosCard";
-import FinancialStatusCard from "@/components/expenses/FinancialStatusCard";
 import { useFinancialData } from "@/hooks/useFinancialData";
 
 const SkeletonCard = () => (
@@ -36,37 +35,28 @@ const DashboardView = () => {
   }
 
   return (
-    <div className="relative space-y-3 px-4 pb-4">
-      {/* Ambient background orbs */}
-      <div className="pointer-events-none absolute -top-20 right-[-20%] h-[300px] w-[300px] rounded-full bg-primary/6 blur-[100px]" />
-      <div className="pointer-events-none absolute top-[40%] left-[-15%] h-[200px] w-[200px] rounded-full bg-primary/4 blur-[80px]" />
-
-      {/* 1. Saldo — prioridade visual máxima */}
+    <div className="space-y-2.5 px-4 pb-4 pt-1">
+      {/* 1. Saldo + Status (fundidos num só card) */}
       <div data-sparky-prompt="Como está meu saldo este mês e o que posso melhorar?" data-sparky-label="Analisar meu saldo">
         <BalanceHero onVisibilityChange={handleVisibilityChange} />
       </div>
 
-      {/* 2. Status financeiro — saúde imediata */}
-      <div data-sparky-prompt="Como está minha saúde financeira agora?" data-sparky-label="Avaliar minha saúde">
-        <FinancialStatusCard />
-      </div>
-
-      {/* 3. Insights proativos da IA */}
+      {/* 2. Insights proativos */}
       <div data-sparky-prompt="Pode me explicar melhor esses insights da IA?" data-sparky-label="Explicar insights">
         <AIInsightsCard />
       </div>
 
-      {/* 4. Indicadores rápidos */}
+      {/* 3. Indicadores rápidos */}
       <div data-sparky-prompt="O que esses indicadores rápidos dizem sobre minhas finanças?" data-sparky-label="Entender meus widgets">
         <WidgetGrid hideValues={hideValues} />
       </div>
 
-      {/* 5. Cofrinhos */}
+      {/* 4. Cofrinhos */}
       <div data-sparky-prompt="Como estão meus cofrinhos e quanto preciso guardar por mês?" data-sparky-label="Avaliar meus cofrinhos">
         <CofrinhosCard />
       </div>
 
-      {/* 6. Dados — análises e detalhes */}
+      {/* 5. Análises */}
       <div data-sparky-prompt="Em quais categorias eu mais gastei este mês?" data-sparky-label="Analisar meus gastos">
         <SpendingOverview hideValues={hideValues} />
       </div>

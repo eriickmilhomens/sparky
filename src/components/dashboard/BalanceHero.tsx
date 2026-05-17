@@ -1,4 +1,4 @@
-import { Eye, EyeOff, Pencil, Plus, Minus, TrendingUp, TrendingDown } from "lucide-react";
+import { Eye, EyeOff, Pencil, Plus, Minus, TrendingUp, TrendingDown, ShieldCheck, AlertTriangle, ShieldAlert } from "lucide-react";
 import { useState, useEffect } from "react";
 import { InfoButton, InfoPanel } from "@/components/InfoButton";
 import { useFinancialData, fmt } from "@/hooks/useFinancialData";
@@ -29,6 +29,16 @@ const BalanceHero = ({ onVisibilityChange }: BalanceHeroProps) => {
   const pctChange = data.income > 0 ? ((data.income - data.expenses) / data.income) * 100 : 0;
   const isPositive = pctChange >= 0;
 
+  // Inline financial status (replaces separate FinancialStatusCard)
+  const ratio = data.income > 0 ? (data.expenses / data.income) * 100 : 0;
+  const status = ratio > 85 ? "critical" : ratio > 60 ? "attention" : "healthy";
+  const statusCfg = {
+    healthy: { Icon: ShieldCheck, label: "Saúde financeira boa", color: "text-success", dot: "bg-success" },
+    attention: { Icon: AlertTriangle, label: `Atenção · ${Math.round(ratio)}% da receita`, color: "text-warning", dot: "bg-warning" },
+    critical: { Icon: ShieldAlert, label: `Crítico · ${Math.round(ratio)}% da receita`, color: "text-destructive", dot: "bg-destructive" },
+  }[status];
+  const showStatus = data.income > 0 || data.expenses > 0;
+
   const handleAdjust = async () => {
     const raw = adjustValue.replace(/\./g, "").replace(",", ".");
     const val = parseFloat(raw);
@@ -55,10 +65,6 @@ const BalanceHero = ({ onVisibilityChange }: BalanceHeroProps) => {
 
   return (
     <div className="card-zelo fade-in-up relative overflow-hidden">
-      {/* Soft ambient glow */}
-      <div className="pointer-events-none absolute -top-16 -right-16 h-44 w-44 rounded-full bg-primary/8 blur-3xl" />
-      <div className="pointer-events-none absolute -bottom-20 -left-12 h-40 w-40 rounded-full bg-primary/4 blur-3xl" />
-
       {/* Top row: label + actions */}
       <div className="relative z-10 flex items-start justify-between mb-3">
         <div className="min-w-0">
@@ -121,6 +127,18 @@ const BalanceHero = ({ onVisibilityChange }: BalanceHeroProps) => {
           </span>
         </div>
       )}
+
+      {/* Status financeiro inline */}
+      {showStatus && (() => {
+        const StatusIcon = statusCfg.Icon;
+        return (
+          <div className="relative z-10 mt-3 flex items-center gap-2 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2">
+            <StatusIcon size={14} className={statusCfg.color} />
+            <span className={`flex-1 text-[11px] font-semibold ${statusCfg.color}`}>{statusCfg.label}</span>
+            <span className={`h-1.5 w-1.5 rounded-full ${statusCfg.dot}`} />
+          </div>
+        );
+      })()}
 
       {editing && (
         <div className="relative z-10 mt-4 pt-4 border-t border-border/40 space-y-3 fade-in-up">
