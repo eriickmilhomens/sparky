@@ -129,13 +129,16 @@ const BalanceHero = ({ onVisibilityChange }: BalanceHeroProps) => {
       )}
 
       {/* Status financeiro inline */}
-      {showStatus && (
-        <div className="relative z-10 mt-3 flex items-center gap-2 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2">
-          <statusCfg.Icon size={14} className={statusCfg.color} />
-          <span className={`flex-1 text-[11px] font-semibold ${statusCfg.color}`}>{statusCfg.label}</span>
-          <span className={`h-1.5 w-1.5 rounded-full ${statusCfg.dot}`} />
-        </div>
-      )}
+      {showStatus && (() => {
+        const StatusIcon = statusCfg.Icon;
+        return (
+          <div className="relative z-10 mt-3 flex items-center gap-2 rounded-2xl border border-border/40 bg-muted/20 px-3 py-2">
+            <StatusIcon size={14} className={statusCfg.color} />
+            <span className={`flex-1 text-[11px] font-semibold ${statusCfg.color}`}>{statusCfg.label}</span>
+            <span className={`h-1.5 w-1.5 rounded-full ${statusCfg.dot}`} />
+          </div>
+        );
+      })()}
 
       {editing && (
         <div className="relative z-10 mt-4 pt-4 border-t border-border/40 space-y-3 fade-in-up">
