@@ -47,15 +47,22 @@ const VisaoGeralTab = ({ onNavigateToMetas }: VisaoGeralTabProps) => {
 
   return (
     <div className="space-y-3">
+      {/* 1. Alertas e ações imediatas */}
       <SyncStatusBanner />
       <ImportReminderBanner />
       <SyncBanner onNavigateToMetas={onNavigateToMetas} hideSyncBanner />
-      <FinancialStatusCard />
       <BudgetAlert />
+
+      {/* 2. Prioridades — o que precisa de atenção agora */}
       <StatusCards />
       <DailyBudgetWidget />
-      <CreditCardCarousel />
+
+      {/* 3. Recorrentes — assinaturas e cartões */}
       <SubscriptionsCard />
+      <CreditCardCarousel />
+
+      {/* 4. Análises — dados detalhados */}
+      <FinancialStatusCard />
       {balanceHistory.some(m => m.value !== 0) && (
         <TrendChart title="Histórico de Saldo" data={balanceHistory} color="hsl(var(--primary))" gradientId="balGrad" />
       )}

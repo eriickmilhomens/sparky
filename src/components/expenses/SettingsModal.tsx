@@ -601,34 +601,21 @@ const RootScreen = ({ onClose, navigate }: { onClose: () => void; navigate: (s: 
         </div>
       </div>
 
-      {/* Avalie */}
-      <button
-        onClick={() => setReviewOpen(true)}
-        className="w-full flex items-center gap-3 rounded-2xl border border-border/60 bg-card/60 px-4 py-3.5 active:scale-[0.985] transition-transform">
-        <Star size={18} className="text-accent" />
-        <span className="flex-1 text-sm font-medium text-left">Avalie o Sparky</span>
-        <ChevronRight size={16} className="opacity-50" />
-      </button>
-
-      {/* Geral */}
+      {/* Itens — prioridades de conta primeiro, depois conveniência, depois dados */}
       <div className="space-y-2.5">
-        <SectionLabel>Geral</SectionLabel>
         <Row icon={User} label="Perfil" onClick={() => navigate("profile")} />
         <Row icon={SlidersHorizontal} label="Preferências" onClick={() => navigate("preferences")} />
-        <Row icon={CreditCard} label="Assinatura" onClick={() => navigate("subscription")} />
-        <Row icon={KeyRound} label="Convite e grupo" onClick={() => navigate("invite")} />
-      </div>
-
-      {/* Segurança */}
-      <div className="space-y-2.5">
-        <SectionLabel>Segurança</SectionLabel>
-        <Row icon={Lock} label="Alterar senha" onClick={() => navigate("security")} />
+        <Row icon={Lock} label="Segurança e senha" onClick={() => navigate("security")} />
         <Row icon={Fingerprint} label="Biometria" onClick={() => navigate("security")} />
       </div>
 
-      {/* Dados */}
       <div className="space-y-2.5">
-        <SectionLabel>Dados</SectionLabel>
+        <Row icon={KeyRound} label="Convite e grupo" onClick={() => navigate("invite")} />
+        <Row icon={CreditCard} label="Assinatura" onClick={() => navigate("subscription")} />
+        <Row icon={Star} label="Avalie o Sparky" onClick={() => setReviewOpen(true)} />
+      </div>
+
+      <div className="space-y-2.5">
         <Row icon={Trash2} label="Limpar todos os dados" danger onClick={() => setConfirmClear(true)} />
       </div>
 
