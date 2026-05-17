@@ -19,10 +19,6 @@ const SkeletonCard = () => (
 const DashboardView = () => {
   const [hideValues, setHideValues] = useState(false);
   const { loading } = useFinancialData();
-  const now = new Date();
-  const dayNames = ["Domingo", "Segunda-Feira", "Terça-Feira", "Quarta-Feira", "Quinta-Feira", "Sexta-Feira", "Sábado"];
-  const monthNames = ["Janeiro", "Fevereiro", "Março", "Abril", "Maio", "Junho", "Julho", "Agosto", "Setembro", "Outubro", "Novembro", "Dezembro"];
-  const dateStr = `${dayNames[now.getDay()]}, ${now.getDate()} de ${monthNames[now.getMonth()]}`;
 
   const handleVisibilityChange = useCallback((visible: boolean) => {
     setHideValues(!visible);
