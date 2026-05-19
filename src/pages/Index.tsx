@@ -1,10 +1,10 @@
 import { useState, useEffect, useRef, Suspense } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import TopTabs from "@/components/layout/TopTabs";
+import GeminiHeader from "@/components/layout/GeminiHeader";
+import AppDrawer from "@/components/layout/AppDrawer";
 import SparkyFAB from "@/components/layout/SparkyFAB";
 import SparkyScan from "@/components/layout/SparkyScan";
-import Header from "@/components/layout/Header";
 import { syncLocalDataOwner } from "@/lib/userLocalData";
 import { isSessionExpired, clearRememberedSession, markSessionRemembered, hasRememberedSessionMarker } from "@/lib/sessionTimer";
 import GlobalNotificationPopup from "@/components/layout/GlobalNotificationPopup";
@@ -296,11 +296,9 @@ const Index = () => {
         </div>
       )}
 
+      <AppDrawer activeTab={activeTab} onTabChange={handleTabChange} />
       {activeTab !== 'chat' && (
-        <>
-          <Header />
-          <TopTabs activeTab={activeTab} onTabChange={handleTabChange} />
-        </>
+        <GeminiHeader activeTab={activeTab} onTabChange={handleTabChange} />
       )}
 
       <div data-main-scroll className={`relative flex-1 min-h-0 overflow-x-hidden ${activeTab === 'chat' ? 'overflow-hidden' : 'overflow-y-auto'}`} style={{ overscrollBehavior: 'none', paddingBottom: activeTab === 'chat' ? '0' : 'calc(96px + env(safe-area-inset-bottom, 0px))' }}>
