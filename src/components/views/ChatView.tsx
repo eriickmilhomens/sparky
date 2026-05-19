@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from "react";
-import { Send, Bot, User, Loader2, Plus, Trash2, ChevronLeft, MoreVertical, Paperclip, Image, FileText, X } from "lucide-react";
+import { Send, Bot, User, Loader2, Plus, Trash2, ChevronLeft, MoreVertical, Paperclip, Image, FileText, X, Menu, Edit3 } from "lucide-react";
 import ReactMarkdown from "react-markdown";
 import remarkGfm from "remark-gfm";
 import { cn } from "@/lib/utils";
@@ -565,63 +565,57 @@ const ChatView = () => {
     >
       {showNewChatConfirm && <NewChatConfirmPopup />}
 
-      {/* Header */}
-      <div className="flex-shrink-0 px-4 pt-2 pb-3 flex items-center justify-between">
-        <div className="flex items-center gap-2.5 min-w-0">
+      {/* Header — Gemini style */}
+      <div className="flex-shrink-0 px-3 pt-2 pb-2 flex items-center justify-between gap-2">
+        <button
+          onClick={() => window.dispatchEvent(new Event("sparky-open-drawer"))}
+          className="h-10 w-10 rounded-full flex items-center justify-center text-foreground/80 hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all border border-border/50 bg-card/40"
+          aria-label="Menu"
+        >
+          <Menu size={18} />
+        </button>
+        <div className="flex-1 flex items-center justify-center min-w-0">
           <button
-            onClick={() => { if ((window as any).__sparkyGoHome) (window as any).__sparkyGoHome(); }}
-            className="h-9 w-9 rounded-2xl flex items-center justify-center bg-card/60 border border-border/40 backdrop-blur-md active:scale-95 transition-all"
-            title="Voltar"
+            onClick={() => setShowHistory(true)}
+            className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full hover:bg-muted/40 active:scale-[0.98] transition-all"
           >
-            <ChevronLeft size={18} />
-          </button>
-          <div className="relative">
-            <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/40 to-primary/10 blur-md" />
-            <div className="relative h-9 w-9 rounded-2xl bg-gradient-to-br from-primary to-primary/70 flex items-center justify-center shadow-lg">
-              <Bot size={16} className="text-primary-foreground" />
-            </div>
-          </div>
-          <div className="min-w-0">
-            <h1 className="font-display text-[15px] font-bold tracking-tight leading-none">Sparky</h1>
-            <div className="flex items-center gap-1.5 mt-1">
-              <span className="h-1.5 w-1.5 rounded-full bg-success animate-pulse" />
-              <p className="text-[10px] text-muted-foreground font-medium">online</p>
-            </div>
-          </div>
-        </div>
-        <div className="flex items-center gap-1.5">
-          <button onClick={() => setShowHistory(true)} className="h-9 w-9 rounded-2xl flex items-center justify-center bg-card/60 border border-border/40 backdrop-blur-md active:scale-95 transition-all" title="Histórico">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          </button>
-          <button onClick={handleNewChatClick} className="h-9 w-9 rounded-2xl flex items-center justify-center bg-card/60 border border-border/40 backdrop-blur-md active:scale-95 transition-all" title="Nova conversa">
-            <Plus size={16} />
+            <span className="font-display text-[16px] font-semibold tracking-tight">Sparky</span>
+            <span className="text-[16px] font-light text-muted-foreground">Chat</span>
           </button>
         </div>
+        <button
+          onClick={handleNewChatClick}
+          className="h-10 w-10 rounded-full flex items-center justify-center text-foreground/80 hover:text-foreground hover:bg-muted/60 active:scale-95 transition-all border border-border/50 bg-card/40"
+          title="Nova conversa"
+        >
+          <Edit3 size={16} />
+        </button>
       </div>
 
-      {/* Messages — flex-1 with min-h-0 enables proper scroll */}
+      {/* Messages */}
       <div
         className="flex-1 min-h-0 overflow-y-auto overscroll-contain px-4 pt-2 pb-3"
         style={{ touchAction: 'pan-y', WebkitOverflowScrolling: 'touch' as any }}
       >
         {messages.length === 0 && (
-          <div className="flex flex-col items-center text-center pt-10 pb-6">
-            <div className="relative mb-5">
-              <div className="absolute inset-0 rounded-full bg-primary/30 blur-2xl" />
-              <div className="relative h-20 w-20 rounded-full bg-gradient-to-br from-primary via-primary/80 to-primary/40 flex items-center justify-center shadow-2xl">
-                <Bot size={32} className="text-primary-foreground" />
+          <div className="flex flex-col items-center justify-center text-center min-h-full pb-10">
+            <div className="relative mb-6">
+              <div className="absolute inset-0 rounded-full bg-primary/30 blur-3xl scale-150" />
+              <div className="relative h-14 w-14 rounded-full bg-gradient-to-br from-primary via-accent to-primary/70 flex items-center justify-center shadow-2xl rotate-45">
+                <div className="rotate-[-45deg]">
+                  <Sparkles size={22} className="text-primary-foreground" />
+                </div>
               </div>
             </div>
-            <h2 className="font-display text-xl font-bold tracking-tight mb-1.5">Como posso ajudar?</h2>
-            <p className="text-xs text-muted-foreground max-w-[280px] mb-6 leading-relaxed">
-              Análise de extratos, projeções e otimização. Envie texto ou anexe arquivos.
-            </p>
+            <h2 className="font-display text-[26px] leading-tight font-light tracking-tight text-foreground/95 max-w-[280px] mb-8">
+              Estou te esperando,<br />é só chamar
+            </h2>
             <div className="grid grid-cols-2 gap-2 w-full max-w-[320px]">
               {shuffledChips.map((chip) => (
                 <button
                   key={chip}
                   onClick={() => sendDirect(chip)}
-                  className="rounded-2xl bg-card/70 border border-border/50 backdrop-blur-sm px-3 py-2.5 text-[11px] font-medium text-left text-foreground/80 hover:text-foreground hover:border-primary/40 hover:bg-card active:scale-[0.97] transition-all"
+                  className="rounded-2xl bg-card/60 border border-border/40 backdrop-blur-sm px-3 py-2.5 text-[11px] font-medium text-left text-muted-foreground hover:text-foreground hover:border-primary/40 hover:bg-card active:scale-[0.97] transition-all"
                 >
                   {chip}
                 </button>
